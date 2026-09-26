@@ -1,0 +1,84 @@
+# ================================================================
+# NIJI ANIME & MANGA PULSE - ROBOTS.TXT
+# STRICT ANTI-AI CRAWLER & LLM HARVESTER BLOCK LIST
+# ================================================================
+
+# Block OpenAI GPTBot & ChatGPT
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+# Block Anthropic ClaudeBot
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+# Block Perplexity AI
+User-agent: PerplexityBot
+Disallow: /
+
+# Block Common Crawl AI Training Dataset
+User-agent: CCBot
+Disallow: /
+
+# Block ByteDance Bytespider
+User-agent: Bytespider
+Disallow: /
+
+# Block Google Extended (Gemini / AI Training)
+User-agent: Google-Extended
+Disallow: /
+
+# Block Amazonbot
+User-agent: Amazonbot
+Disallow: /
+
+# Block Diffbot
+User-agent: Diffbot
+Disallow: /
+
+# Block Meta FacebookBot
+User-agent: FacebookBot
+Disallow: /
+
+User-agent: Meta-ExternalAgent
+Disallow: /
+
+# Block Applebot-Extended
+User-agent: Applebot-Extended
+Disallow: /
+
+# Block Cohere AI
+User-agent: cohere-ai
+Disallow: /
+
+# Block Omgili / Webz.io
+User-agent: omgili
+Disallow: /
+
+# Block Scrapy, Python, cURL, Wget, and automated HTTP scrapers
+User-agent: Scrapy
+Disallow: /
+
+User-agent: python-requests
+Disallow: /
+
+# Allow authentic human search engine discovery
+User-agent: Googlebot
+Allow: /
+Disallow: /api/
+
+User-agent: Bingbot
+Allow: /
+Disallow: /api/
+
+# Disallow all bots from honeypot trap and internal APIs
+User-agent: *
+Disallow: /api/trap-ai-honeypot
+Disallow: /honeypot
+Disallow: /data/
+Disallow: /api/blocked-bots

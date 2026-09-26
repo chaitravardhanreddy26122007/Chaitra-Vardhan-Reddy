@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Animorphia - Turn Story into Anime Studio</title>
+  <meta name="robots" content="noai, noimageai, noindex, nofollow" />
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            background: 'hsl(224, 71%, 4%)',
+            foreground: 'hsl(213, 31%, 91%)',
+            muted: 'hsl(223, 47%, 11%)',
+            border: 'hsl(216, 34%, 17%)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    /* CSS Variables matching globals.css */
+    :root {
+      --background: 224 71% 4%;
+      --foreground: 213 31% 91%;
+      --border: 216 34% 17%;
+      --muted: 223 47% 11%;
+    }
+
+    body {
+      background-color: hsl(var(--background));
+      color: hsl(var(--foreground));
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    /* ========================================================
+       EXTENDED TOOLTIP & ANIMATION STYLES (Requested Component)
+       ======================================================== */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .tooltip-content {
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+    .tooltip-content-wrapper {
+      position: relative;
+      height: 16px;
+      overflow: hidden;
+      animation: fadeIn 150ms ease-out;
+    }
+
+    .tooltip-label {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      opacity: 1;
+      transform: translateY(0);
+      transition: all 800ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    [data-state='closed'] {
+      opacity: 0;
+      transition: opacity 150ms ease-out;
+    }
+
+    [data-state='open'] {
+      opacity: 1;
+      transition: opacity 150ms ease-out, width 800ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes slideOut {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(-100%); opacity: 0; }
+    }
+
+    .tooltip-content.slide-in {
+      animation: slideIn 150ms ease-out;
+    }
+
+    .tooltip-content.slide-out {
+      animation: slideOut 150ms ease-out;
+    }
+
+    @keyframes slideInUp {
+      from { transform: translateY(-5px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .tooltip-animation {
+      animation: fadeIn 0.3s ease-in-out, slideInUp 0.3s ease-in-out;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-950 text-slate-100 flex flex-col relative pb-32">
+  
+  <!-- Subtle ambient background gradients -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+    <div class="absolute -top-32 -left-32 w-80 h-80 bg-violet-600/15 rounded-full blur-[100px]"></div>
+    <div class="absolute top-1/3 -right-32 w-80 h-80 bg-indigo-600/15 rounded-full blur-[100px]"></div>
+    <div class="absolute -bottom-32 left-1/3 w-80 h-80 bg-cyan-600/15 rounded-full blur-[100px]"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-md">
+    <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-violet-600 to-cyan-500 flex items-center justify-center text-white shadow-lg shadow-violet-500/20">
+          <i data-lucide="sparkles" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-bold tracking-tight text-white text-base">Animorphia</span>
+            <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-300 border border-violet-500/30">Studio v2.5</span>
+          </div>
+          <p class="text-[11px] text-slate-400">Story to Anime Engine</p>
+        </div>
+      </div>
+
+      <!-- Live Badges -->
+      <div class="flex items-center gap-2">
+        <div id="nudity-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border bg-emerald-500/10 text-emerald-300 border-emerald-500/30">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-400"></i>
+          <span>No-Nudity Guard: Active</span>
+        </div>
+        <div class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border bg-cyan-500/10 text-cyan-300 border-cyan-500/30">
+          <i data-lucide="bot" class="w-3.5 h-3.5 text-cyan-400"></i>
+          <span>Anti-AI Shield</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-4xl mx-auto px-6 pt-8 w-full z-10 flex-1">
+    
+    <!-- Top Step Tabs -->
+    <div class="flex justify-center mb-8">
+      <div class="inline-flex p-1 rounded-xl bg-slate-900/90 border border-slate-800/80 backdrop-blur">
+        <button onclick="switchTab('write')" id="tab-btn-write" class="tab-btn px-4 py-1.5 rounded-lg text-xs font-medium bg-violet-600 text-white shadow transition-all">
+          1. Story Script
+        </button>
+        <button onclick="switchTab('styles')" id="tab-btn-styles" class="tab-btn px-4 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition-all">
+          2. Anime Style
+        </button>
+        <button onclick="switchTab('storyboard')" id="tab-btn-storyboard" class="tab-btn px-4 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition-all">
+          3. Storyboard
+        </button>
+        <button onclick="switchTab('player')" id="tab-btn-player" class="tab-btn px-4 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition-all">
+          4. Cinema Preview
+        </button>
+        <button onclick="switchTab('safety')" id="tab-btn-safety" class="tab-btn px-4 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition-all">
+          Safety Guard
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB 1: STORY INPUT & NUDITY CHECKER -->
+    <div id="view-write" class="space-y-6">
+      <div class="rounded-xl border border-slate-800/80 bg-slate-900/40 backdrop-blur-xl p-6 shadow-sm">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h2 class="text-base font-semibold text-white flex items-center gap-2">
+              <i data-lucide="feather" class="w-4 h-4 text-violet-400"></i>
+              Write or Paste Your Story Script
+            </h2>
+            <p class="text-xs text-slate-400 mt-0.5">
+              The engine detects key moments, character emotion, lighting, and camera cuts automatically.
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-slate-400">Sample:</span>
+            <button onclick="loadSample(0)" class="text-xs px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300">Shibuya Rain</button>
+            <button onclick="loadSample(1)" class="text-xs px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300">Fox Shrine</button>
+          </div>
+        </div>
+
+        <div class="relative">
+          <textarea
+            id="story-input"
+            rows="6"
+            oninput="checkSafety()"
+            class="w-full rounded-lg border border-slate-800 bg-slate-950/60 p-4 text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-violet-500/50"
+            placeholder="Type your story here..."
+          >In the shadow of a neon Tokyo rainstorm, 17-year-old apprentice Ren discovers a brass pocket watch that pauses time for exactly thirty seconds. When a mysterious silver-haired girl runs through frozen raindrops seeking shelter, the gears of destiny lock into place.</textarea>
+        </div>
+
+        <!-- Real-Time Nudity / NSFW Violation Alert -->
+        <div id="violation-box" class="hidden mt-4 p-3.5 rounded-lg bg-rose-950/40 border border-rose-800/60 text-rose-300 text-xs flex items-start gap-3">
+          <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-400 shrink-0 mt-0.5"></i>
+          <div>
+            <p class="font-semibold text-rose-200">Content Moderation Violation</p>
+            <p id="violation-text" class="mt-0.5 text-rose-300"></p>
+            <p class="mt-1 text-rose-400/80">Please remove the restricted keywords to continue anime synthesis.</p>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between mt-5 pt-3 border-t border-slate-800/60">
+          <div class="flex items-center gap-2 text-xs text-slate-400">
+            <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400"></i>
+            <span>Restricting Nudity & NSFW Content (Zero Tolerance)</span>
+          </div>
+
+          <button
+            id="generate-btn"
+            onclick="generateAnime()"
+            class="inline-flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/20 hover:opacity-95 transition-all disabled:opacity-50 disabled:pointer-events-none"
+          >
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+            <span>Generate Anime Scenes</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: ANIME STYLES -->
+    <div id="view-styles" class="hidden space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Style 1 -->
+        <div onclick="selectStyle(this, 'Makoto Shinkai')" class="style-card border-2 border-violet-500 bg-violet-950/20 rounded-xl p-4 cursor-pointer transition-all">
+          <div class="h-40 rounded-lg overflow-hidden relative mb-3">
+            <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover" />
+            <div class="absolute top-2 left-2 px-2 py-0.5 bg-black/70 rounded text-[10px] text-white">Cinema Realistic</div>
+          </div>
+          <h3 class="font-bold text-white text-sm">Makoto Shinkai Sky</h3>
+          <p class="text-xs text-slate-400 mt-1">Ethereal luminous skies, photorealistic lighting & poignant drama</p>
+        </div>
+
+        <!-- Style 2 -->
+        <div onclick="selectStyle(this, 'Studio Ghibli')" class="style-card border border-slate-800 bg-slate-900/40 rounded-xl p-4 cursor-pointer transition-all hover:border-slate-700">
+          <div class="h-40 rounded-lg overflow-hidden relative mb-3">
+            <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover" />
+            <div class="absolute top-2 left-2 px-2 py-0.5 bg-black/70 rounded text-[10px] text-white">Pastoral Watercolor</div>
+          </div>
+          <h3 class="font-bold text-white text-sm">Studio Ghibli Watercolor</h3>
+          <p class="text-xs text-slate-400 mt-1">Hand-painted nature, warm nostalgic whimsy & lush greenery</p>
+        </div>
+
+        <!-- Style 3 -->
+        <div onclick="selectStyle(this, 'MAPPA Dark Fantasy')" class="style-card border border-slate-800 bg-slate-900/40 rounded-xl p-4 cursor-pointer transition-all hover:border-slate-700">
+          <div class="h-40 rounded-lg overflow-hidden relative mb-3">
+            <img src="https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover" />
+            <div class="absolute top-2 left-2 px-2 py-0.5 bg-black/70 rounded text-[10px] text-white">Action Shonen</div>
+          </div>
+          <h3 class="font-bold text-white text-sm">MAPPA Dark Fantasy</h3>
+          <p class="text-xs text-slate-400 mt-1">High contrast, dynamic gritty lines & heart-pounding combat</p>
+        </div>
+
+        <!-- Style 4 -->
+        <div onclick="selectStyle(this, 'Kyoto Animation')" class="style-card border border-slate-800 bg-slate-900/40 rounded-xl p-4 cursor-pointer transition-all hover:border-slate-700">
+          <div class="h-40 rounded-lg overflow-hidden relative mb-3">
+            <img src="https://images.unsplash.com/photo-1522383225653-ed111181a951?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover" />
+            <div class="absolute top-2 left-2 px-2 py-0.5 bg-black/70 rounded text-[10px] text-white">Slice of Life</div>
+          </div>
+          <h3 class="font-bold text-white text-sm">Kyoto Animation Pastel</h3>
+          <p class="text-xs text-slate-400 mt-1">Subtle character expressions, soft lens flares & cherry blossoms</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: STORYBOARD -->
+    <div id="view-storyboard" class="hidden space-y-4">
+      <!-- Cut 1 -->
+      <div class="rounded-xl border border-slate-800 bg-slate-900/40 p-4 flex flex-col md:flex-row gap-5 items-center">
+        <div class="w-full md:w-56 h-32 rounded-lg overflow-hidden shrink-0 relative">
+          <img src="https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover" />
+          <div class="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-black/70 text-[10px] text-white font-mono">00:00 - 00:04</div>
+        </div>
+        <div class="flex-1 space-y-1">
+          <div class="flex items-center justify-between">
+            <h4 class="font-semibold text-white text-sm">Scene 1: Neon Downpour in Shibuya</h4>
+            <span class="text-[10px] px-2 py-0.5 rounded border border-slate-700 text-slate-400">Keyframe #1</span>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed">Rain droplets cascade through glowing holographic billboards as Ren gazes at the clocktower.</p>
+          <p class="text-[11px] text-indigo-400 pt-1 flex items-center gap-1.5">
+            <i data-lucide="volume-2" class="w-3.5 h-3.5"></i>
+            Ambient synth rain & gentle piano chords
+          </p>
+        </div>
+      </div>
+
+      <!-- Cut 2 -->
+      <div class="rounded-xl border border-slate-800 bg-slate-900/40 p-4 flex flex-col md:flex-row gap-5 items-center">
+        <div class="w-full md:w-56 h-32 rounded-lg overflow-hidden shrink-0 relative">
+          <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover" />
+          <div class="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-black/70 text-[10px] text-white font-mono">00:04 - 00:08</div>
+        </div>
+        <div class="flex-1 space-y-1">
+          <div class="flex items-center justify-between">
+            <h4 class="font-semibold text-white text-sm">Scene 2: The Temporal Pocket Watch</h4>
+            <span class="text-[10px] px-2 py-0.5 rounded border border-slate-700 text-slate-400">Keyframe #2</span>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed">Extreme close-up of intricate golden clockwork ticking into temporal suspension.</p>
+          <p class="text-[11px] text-indigo-400 pt-1 flex items-center gap-1.5">
+            <i data-lucide="volume-2" class="w-3.5 h-3.5"></i>
+            Resonant clock chime and reverb echo
+          </p>
+        </div>
+      </div>
+
+      <!-- Cut 3 -->
+      <div class="rounded-xl border border-slate-800 bg-slate-900/40 p-4 flex flex-col md:flex-row gap-5 items-center">
+        <div class="w-full md:w-56 h-32 rounded-lg overflow-hidden shrink-0 relative">
+          <img src="https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover" />
+          <div class="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-black/70 text-[10px] text-white font-mono">00:08 - 00:14</div>
+        </div>
+        <div class="flex-1 space-y-1">
+          <div class="flex items-center justify-between">
+            <h4 class="font-semibold text-white text-sm">Scene 3: The Silver-Haired Encounter</h4>
+            <span class="text-[10px] px-2 py-0.5 rounded border border-slate-700 text-slate-400">Keyframe #3</span>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed">Water drops suspended mid-air. Footsteps break the quiet stillness under the torii gate.</p>
+          <p class="text-[11px] text-indigo-400 pt-1 flex items-center gap-1.5">
+            <i data-lucide="volume-2" class="w-3.5 h-3.5"></i>
+            Strings crescendo into emotive theme
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: PLAYER PREVIEW -->
+    <div id="view-player" class="hidden space-y-4">
+      <div class="rounded-xl border border-slate-800 bg-slate-900/60 overflow-hidden shadow-2xl">
+        <div class="relative aspect-video w-full bg-black overflow-hidden flex items-center justify-center">
+          <img id="player-img" src="https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=1200&q=80" class="w-full h-full object-cover filter brightness-95" />
+          
+          <!-- Cinema Subtitles -->
+          <div class="absolute bottom-12 inset-x-0 text-center px-6 pointer-events-none">
+            <span id="player-sub" class="inline-block bg-black/70 backdrop-blur-md px-4 py-1.5 rounded-lg text-sm text-yellow-300 font-medium tracking-wide border border-white/10 shadow-lg">
+              Rain droplets cascade through glowing holographic billboards as Ren gazes at the clocktower.
+            </span>
+          </div>
+
+          <!-- Bottom Control Bar -->
+          <div class="absolute bottom-0 inset-x-0 h-11 bg-slate-950/90 backdrop-blur flex items-center justify-between px-4 border-t border-slate-800">
+            <button onclick="togglePlay()" class="text-white hover:text-violet-400 transition-colors flex items-center gap-2 text-xs font-medium">
+              <i id="play-icon" data-lucide="play" class="w-4 h-4"></i>
+              <span id="play-status">Play Anime</span>
+            </button>
+            <div class="flex items-center gap-1">
+              <button onclick="setPlayerScene(0)" class="w-2.5 h-2.5 rounded-full bg-violet-500"></button>
+              <button onclick="setPlayerScene(1)" class="w-2.5 h-2.5 rounded-full bg-slate-700"></button>
+              <button onclick="setPlayerScene(2)" class="w-2.5 h-2.5 rounded-full bg-slate-700"></button>
+            </div>
+            <span class="text-xs text-slate-400 font-mono">1080p 60fps</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: SAFETY POLICY -->
+    <div id="view-safety" class="hidden space-y-4">
+      <div class="rounded-xl border border-slate-800 bg-slate-900/40 p-6">
+        <h3 class="text-base font-bold text-white flex items-center gap-2 mb-2">
+          <i data-lucide="shield-check" class="w-5 h-5 text-emerald-400"></i>
+          Content Moderation & Anti-Bot Safeguards
+        </h3>
+        <p class="text-xs text-slate-400 leading-relaxed mb-4">
+          Animorphia is built as a clean, creative storytelling studio. We adhere to two strict technical guidelines:
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+            <span class="font-semibold text-rose-300 flex items-center gap-1.5">
+              <i data-lucide="eye-off" class="w-4 h-4"></i>
+              1. Restrict Nudity & NSFW Content
+            </span>
+            <p class="text-slate-400 leading-relaxed">
+              Real-time lexical filters analyze story input to ensure zero nudity, non-consensual themes, or explicit adult content. Generation is automatically halted if prohibited keywords are identified.
+            </p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+            <span class="font-semibold text-cyan-300 flex items-center gap-1.5">
+              <i data-lucide="bot" class="w-4 h-4"></i>
+              2. Restrict AI Bots & Web Scrapers
+            </span>
+            <p class="text-slate-400 leading-relaxed">
+              Equipped with strict <code class="text-cyan-400">robots.txt</code>, <code class="text-cyan-400">noai</code>, and <code class="text-cyan-400">noimageai</code> headers. Headless automation tools and automated AI web scrapers are blocked from harvesting content.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ==========================================================
+       FLOATING BOTTOM MENU BAR (Integrating Requested Component)
+       ========================================================== -->
+  <footer class="fixed bottom-6 inset-x-0 z-50 flex items-center justify-center pointer-events-none">
+    <div class="pointer-events-auto relative">
+      
+      <!-- Animated Tooltip Bubble -->
+      <div id="menu-tooltip" class="absolute left-0 right-0 -top-[31px] pointer-events-none z-50 flex justify-center transition-all duration-300 opacity-0 translate-y-1">
+        <div class="h-7 px-3 rounded-lg inline-flex justify-center items-center overflow-hidden bg-slate-950/95 backdrop-blur border border-slate-800/80 shadow-[0_0_0_1px_rgba(255,255,255,0.08)]">
+          <p id="menu-tooltip-text" class="text-[13px] font-medium leading-tight whitespace-nowrap text-white">
+            Messages
+          </p>
+        </div>
+      </div>
+
+      <!-- Pill Container -->
+      <div 
+        id="menu-bar-container"
+        class="h-10 px-1.5 inline-flex justify-center items-center gap-[3px] overflow-hidden z-10 rounded-full bg-slate-950/95 backdrop-blur border border-slate-800/60 shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_8px_16px_-4px_rgba(0,0,0,0.4)]"
+      >
+        <!-- Item 0: Story Script -->
+        <button 
+          class="menu-item w-8 h-8 px-3 py-1 rounded-full flex justify-center items-center gap-2 hover:bg-slate-800/80 transition-colors"
+          onmouseenter="showTooltip(this, 'Story Script')"
+          onmouseleave="hideTooltip()"
+          onclick="switchTab('write')"
+        >
+          <div class="w-[18px] h-[18px] flex justify-center items-center overflow-hidden">
+            <i data-lucide="feather" class="w-full h-full text-slate-300"></i>
+          </div>
+          <span class="sr-only">Story Script</span>
+        </button>
+
+        <!-- Item 1: Anime Style -->
+        <button 
+          class="menu-item w-8 h-8 px-3 py-1 rounded-full flex justify-center items-center gap-2 hover:bg-slate-800/80 transition-colors"
+          onmouseenter="showTooltip(this, 'Anime Styles')"
+          onmouseleave="hideTooltip()"
+          onclick="switchTab('styles')"
+        >
+          <div class="w-[18px] h-[18px] flex justify-center items-center overflow-hidden">
+            <i data-lucide="palette" class="w-full h-full text-slate-300"></i>
+          </div>
+          <span class="sr-only">Anime Styles</span>
+        </button>
+
+        <!-- Item 2: Storyboard -->
+        <button 
+          class="menu-item w-8 h-8 px-3 py-1 rounded-full flex justify-center items-center gap-2 hover:bg-slate-800/80 transition-colors"
+          onmouseenter="showTooltip(this, 'Storyboard')"
+          onmouseleave="hideTooltip()"
+          onclick="switchTab('storyboard')"
+        >
+          <div class="w-[18px] h-[18px] flex justify-center items-center overflow-hidden">
+            <i data-lucide="layers" class="w-full h-full text-slate-300"></i>
+          </div>
+          <span class="sr-only">Storyboard</span>
+        </button>
+
+        <!-- Item 3: Cinema Player -->
+        <button 
+          class="menu-item w-8 h-8 px-3 py-1 rounded-full flex justify-center items-center gap-2 hover:bg-slate-800/80 transition-colors"
+          onmouseenter="showTooltip(this, 'Cinema Player')"
+          onmouseleave="hideTooltip()"
+          onclick="switchTab('player')"
+        >
+          <div class="w-[18px] h-[18px] flex justify-center items-center overflow-hidden">
+            <i data-lucide="film" class="w-full h-full text-slate-300"></i>
+          </div>
+          <span class="sr-only">Cinema Player</span>
+        </button>
+
+        <!-- Item 4: Safety Shield -->
+        <button 
+          class="menu-item w-8 h-8 px-3 py-1 rounded-full flex justify-center items-center gap-2 hover:bg-slate-800/80 transition-colors"
+          onmouseenter="showTooltip(this, 'Safety Shield')"
+          onmouseleave="hideTooltip()"
+          onclick="switchTab('safety')"
+        >
+          <div class="w-[18px] h-[18px] flex justify-center items-center overflow-hidden">
+            <i data-lucide="shield-check" class="w-full h-full text-slate-300"></i>
+          </div>
+          <span class="sr-only">Safety Shield</span>
+        </button>
+
+        <!-- Item 5: Demo -->
+        <button 
+          class="menu-item w-8 h-8 px-3 py-1 rounded-full flex justify-center items-center gap-2 hover:bg-slate-800/80 transition-colors"
+          onmouseenter="showTooltip(this, 'Shadcn UI Demo')"
+          onmouseleave="hideTooltip()"
+          onclick="switchTab('write')"
+        >
+          <div class="w-[18px] h-[18px] flex justify-center items-center overflow-hidden">
+            <i data-lucide="sparkles" class="w-full h-full text-violet-400"></i>
+          </div>
+          <span class="sr-only">Demo</span>
+        </button>
+      </div>
+
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+
+    const SAMPLES = [
+      "In the shadow of a neon Tokyo rainstorm, 17-year-old apprentice Ren discovers a brass pocket watch that pauses time for exactly thirty seconds. When a mysterious silver-haired girl runs through frozen raindrops seeking shelter, the gears of destiny lock into place.",
+      "Beneath the misty cedar canopies of Mount Hiei, young shrine keeper Aoi befriends an ancient fox spirit whose lantern guides wandering memories back to the mortal world before the twilight bells strike."
+    ];
+
+    const BANNED_KEYWORDS = [
+      'nude', 'nudity', 'naked', 'nsfw', 'porn', 'erotic', 'sex', 'sexual',
+      'hentai', 'ecchi', 'lewd', 'explicit', 'undress', 'topless', 'genital',
+      'breasts', 'penis', 'vagina', 'fetish', 'strip', 'lingerie', 'orgasm'
+    ];
+
+    function checkSafety() {
+      const text = document.getElementById('story-input').value.toLowerCase();
+      const flagged = [];
+      
+      for (const w of BANNED_KEYWORDS) {
+        const reg = new RegExp('\\b' + w + '\\b', 'i');
+        if (reg.test(text)) flagged.push(w);
+      }
+
+      const violationBox = document.getElementById('violation-box');
+      const violationText = document.getElementById('violation-text');
+      const genBtn = document.getElementById('generate-btn');
+      const badge = document.getElementById('nudity-badge');
+
+      if (flagged.length > 0) {
+        violationBox.classList.remove('hidden');
+        violationText.textContent = `Prohibited content flagged: "${flagged.join(', ')}". Nudity & explicit requests are strictly forbidden.`;
+        genBtn.disabled = true;
+        badge.className = "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border bg-rose-500/20 text-rose-300 border-rose-500/30";
+        badge.innerHTML = `<i data-lucide="shield-alert" class="w-3.5 h-3.5 text-rose-400"></i><span>NSFW Triggered</span>`;
+        lucide.createIcons();
+      } else {
+        violationBox.classList.add('hidden');
+        genBtn.disabled = false;
+        badge.className = "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border bg-emerald-500/10 text-emerald-300 border-emerald-500/30";
+        badge.innerHTML = `<i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-400"></i><span>No-Nudity Guard: Active</span>`;
+        lucide.createIcons();
+      }
+    }
+
+    function loadSample(idx) {
+      document.getElementById('story-input').value = SAMPLES[idx];
+      checkSafety();
+    }
+
+    function switchTab(tab) {
+      const tabs = ['write', 'styles', 'storyboard', 'player', 'safety'];
+      tabs.forEach(t => {
+        const el = document.getElementById('view-' + t);
+        const btn = document.getElementById('tab-btn-' + t);
+        if (el) el.classList.add('hidden');
+        if (btn) {
+          btn.className = "tab-btn px-4 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition-all";
+        }
+      });
+      const activeEl = document.getElementById('view-' + tab);
+      const activeBtn = document.getElementById('tab-btn-' + tab);
+      if (activeEl) activeEl.classList.remove('hidden');
+      if (activeBtn) {
+        activeBtn.className = "tab-btn px-4 py-1.5 rounded-lg text-xs font-medium bg-violet-600 text-white shadow transition-all";
+      }
+    }
+
+    function generateAnime() {
+      const btn = document.getElementById('generate-btn');
+      btn.innerHTML = `<i data-lucide="refresh-cw" class="w-4 h-4 animate-spin"></i><span>Synthesizing Storyboard...</span>`;
+      btn.disabled = true;
+      lucide.createIcons();
+      setTimeout(() => {
+        btn.innerHTML = `<i data-lucide="sparkles" class="w-4 h-4"></i><span>Generate Anime Scenes</span>`;
+        btn.disabled = false;
+        switchTab('storyboard');
+        lucide.createIcons();
+      }, 1000);
+    }
+
+    function selectStyle(el, name) {
+      document.querySelectorAll('.style-card').forEach(c => {
+        c.className = "style-card border border-slate-800 bg-slate-900/40 rounded-xl p-4 cursor-pointer transition-all hover:border-slate-700";
+      });
+      el.className = "style-card border-2 border-violet-500 bg-violet-950/20 rounded-xl p-4 cursor-pointer transition-all";
+    }
+
+    // Tooltip functionality mimicking bottom-menu.tsx
+    const tooltip = document.getElementById('menu-tooltip');
+    const tooltipText = document.getElementById('menu-tooltip-text');
+
+    function showTooltip(el, label) {
+      tooltipText.textContent = label;
+      tooltip.classList.remove('opacity-0', 'translate-y-1');
+      tooltip.classList.add('opacity-100', 'translate-y-0');
+    }
+
+    function hideTooltip() {
+      tooltip.classList.add('opacity-0', 'translate-y-1');
+      tooltip.classList.remove('opacity-100', 'translate-y-0');
+    }
+
+    // Player logic
+    const scenes = [
+      {
+        img: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=1200&q=80",
+        sub: "Rain droplets cascade through glowing holographic billboards as Ren gazes at the clocktower."
+      },
+      {
+        img: "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1200&q=80",
+        sub: "Extreme close-up of intricate golden clockwork ticking into temporal suspension."
+      },
+      {
+        img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=1200&q=80",
+        sub: "Water drops suspended mid-air. Footsteps break the quiet stillness under the torii gate."
+      }
+    ];
+
+    let currentScene = 0;
+    let isPlaying = false;
+    let playInterval = null;
+
+    function setPlayerScene(idx) {
+      currentScene = idx;
+      document.getElementById('player-img').src = scenes[idx].img;
+      document.getElementById('player-sub').textContent = scenes[idx].sub;
+    }
+
+    function togglePlay() {
+      isPlaying = !isPlaying;
+      const statusText = document.getElementById('play-status');
+      const icon = document.getElementById('play-icon');
+      if (isPlaying) {
+        statusText.textContent = "Pause Anime";
+        icon.setAttribute('data-lucide', 'pause');
+        playInterval = setInterval(() => {
+          currentScene = (currentScene + 1) % scenes.length;
+          setPlayerScene(currentScene);
+        }, 2500);
+      } else {
+        statusText.textContent = "Play Anime";
+        icon.setAttribute('data-lucide', 'play');
+        clearInterval(playInterval);
+      }
+      lucide.createIcons();
+    }
+  </script>
+</body>
+</html>

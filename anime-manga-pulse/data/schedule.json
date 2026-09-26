@@ -1,0 +1,170 @@
+{
+  "Monday": [
+    {
+      "title": "Kagurabachi",
+      "type": "Manga",
+      "release": "Chapter 53 - MANGA Plus",
+      "time": "00:00 JST",
+      "official": true
+    },
+    {
+      "title": "One Piece",
+      "type": "Manga",
+      "release": "Chapter 1135 - MANGA Plus",
+      "time": "00:00 JST",
+      "official": true
+    },
+    {
+      "title": "Sakamoto Days",
+      "type": "Manga",
+      "release": "Chapter 188 - Shonen Jump",
+      "time": "00:00 JST",
+      "official": true
+    },
+    {
+      "title": "Tower of God",
+      "type": "Anime",
+      "release": "Season 2 Episode 24 - Crunchyroll",
+      "time": "23:00 JST",
+      "official": true
+    }
+  ],
+  "Tuesday": [
+    {
+      "title": "Chainsaw Man Part 2",
+      "type": "Manga",
+      "release": "Chapter 178 - Shonen Jump+",
+      "time": "00:00 JST",
+      "official": true
+    },
+    {
+      "title": "One Piece Early Spoilers",
+      "type": "Manga",
+      "release": "Chapter 1136 Initial Leak Bulletins",
+      "time": "18:00 JST",
+      "official": false
+    },
+    {
+      "title": "Bleach TYBW Part 3 Staff Interview",
+      "type": "Anime",
+      "release": "Pierrot Production Notes",
+      "time": "20:00 JST",
+      "official": true
+    }
+  ],
+  "Wednesday": [
+    {
+      "title": "Jujutsu Kaisen Leaks & Scanlations",
+      "type": "Manga",
+      "release": "WSJ Issue Raw Scans & Translated Text",
+      "time": "14:00 JST",
+      "official": false
+    },
+    {
+      "title": "Oshi no Ko",
+      "type": "Manga",
+      "release": "Weekly Young Jump Chapter Drop",
+      "time": "00:00 JST",
+      "official": true
+    },
+    {
+      "title": "Dragon Ball Daima",
+      "type": "Anime",
+      "release": "Episode Preview Trailer & Synopses",
+      "time": "17:00 JST",
+      "official": true
+    }
+  ],
+  "Thursday": [
+    {
+      "title": "One Piece Full Raw Scans",
+      "type": "Manga",
+      "release": "High-Res Magazine Page Scans (Weibo/Reddit)",
+      "time": "12:00 JST",
+      "official": false
+    },
+    {
+      "title": "Spy x Family",
+      "type": "Manga",
+      "release": "Bi-weekly Mission Chapter - Jump+",
+      "time": "00:00 JST",
+      "official": true
+    },
+    {
+      "title": "DanDaDan Season 2 Teaser",
+      "type": "Anime",
+      "release": "Science SARU Weekly Clip",
+      "time": "22:00 JST",
+      "official": true
+    }
+  ],
+  "Friday": [
+    {
+      "title": "WSJ Early Cover & TOC Leaks",
+      "type": "Manga",
+      "release": "Next Issue Color Page & Rank Leaks",
+      "time": "15:30 JST",
+      "official": false
+    },
+    {
+      "title": "Demon Slayer Infinity Castle Update",
+      "type": "Anime",
+      "release": "Ufotable Theatrical Bulletin",
+      "time": "18:00 JST",
+      "official": true
+    },
+    {
+      "title": "Solo Leveling Episode Broadcast",
+      "type": "Anime",
+      "release": "Episode 14 - Tokyo MX / Crunchyroll",
+      "time": "24:00 JST",
+      "official": true
+    }
+  ],
+  "Saturday": [
+    {
+      "title": "Bleach: TYBW Part 3",
+      "type": "Anime",
+      "release": "Episode 39 Simulcast - Hulu/Disney+/TV Tokyo",
+      "time": "23:00 JST",
+      "official": true
+    },
+    {
+      "title": "My Hero Academia Final Season",
+      "type": "Anime",
+      "release": "Episode Climax - YTV/Crunchyroll",
+      "time": "17:30 JST",
+      "official": true
+    },
+    {
+      "title": "Hunter x Hunter Leak Verification",
+      "type": "Manga",
+      "release": "Togashi Manuscript Progress Update",
+      "time": "19:00 JST",
+      "official": false
+    }
+  ],
+  "Sunday": [
+    {
+      "title": "One Piece Anime",
+      "type": "Anime",
+      "release": "Episode 1124 Egghead Arc - Fuji TV",
+      "time": "09:30 JST",
+      "official": true
+    },
+    {
+      "title": "Weekly Shonen Jump Sunday Global Release",
+      "type": "Manga",
+      "release": "MANGA Plus / Viz Media Official Chapters",
+      "time": "00:00 JST",
+      "official": true
+    },
+    {
+      "title": "Anime Wire Weekly Recap & Rumor Roundup",
+      "type": "All",
+      "release": "Niji Pulse Editorial Analysis",
+      "time": "20:00 JST",
+      "official": true
+    }
+  ]
+}

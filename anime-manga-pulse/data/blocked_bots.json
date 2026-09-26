@@ -1,0 +1,47 @@
+{
+  "blocked_count": 414,
+  "recent_blocked": [
+    {
+      "ip": "127.0.0.1",
+      "bot": "Mozilla/5.0",
+      "timestamp": "2026-09-26 12:59:37",
+      "reason": "Tripped Invisible Anti-AI Honeypot Trap"
+    },
+    {
+      "ip": "127.0.0.1",
+      "bot": "GPTBot/1.0 (+https://openai.com/gptbot)",
+      "timestamp": "2026-09-26 12:59:35",
+      "reason": "Disallowed AI / Web Crawler User-Agent Detected"
+    },
+    {
+      "ip": "198.51.100.44",
+      "bot": "GPTBot/1.2",
+      "timestamp": "2026-09-26 12:44:10",
+      "reason": "AI Scraper Forbidden User-Agent"
+    },
+    {
+      "ip": "203.0.113.89",
+      "bot": "ClaudeBot/1.0",
+      "timestamp": "2026-09-26 12:38:05",
+      "reason": "AI Scraper Forbidden User-Agent"
+    },
+    {
+      "ip": "192.0.2.17",
+      "bot": "PerplexityBot",
+      "timestamp": "2026-09-26 12:21:40",
+      "reason": "Fell into /api/trap-ai-honeypot trap"
+    },
+    {
+      "ip": "198.51.100.12",
+      "bot": "Bytespider/2.0",
+      "timestamp": "2026-09-26 11:55:18",
+      "reason": "Automated Content Harvester Blocked"
+    },
+    {
+      "ip": "203.0.113.5",
+      "bot": "CCBot/2.0",
+      "timestamp": "2026-09-26 11:32:02",
+      "reason": "AI Training Dataset Crawler Blocked"
+    }
+  ]
+}

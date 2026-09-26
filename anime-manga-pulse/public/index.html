@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIJI PULSE | Daily Anime & Manga Updates (Official & Unofficial News)</title>
+    <!-- Strict Anti-AI & Anti-Crawler Metadata -->
+    <meta name="robots" content="noai, noimageai, nofollow">
+    <meta name="ai-directive" content="crawl-forbidden, training-prohibited">
+    <meta name="description" content="Niji Pulse - Daily anime & manga updates, official announcements, leaks, rumors, episode drops, chapter releases, and daily schedule. Protected by Anti-AI Bot Shield.">
+    <!-- Google Fonts for Modern Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Live Breaking News Rainbow Ticker -->
+    <div class="breaking-ticker-bar" id="breaking-ticker">
+        <div class="ticker-label">
+            <span class="rainbow-pulse-dot"></span>
+            <span class="ticker-text">BREAKING PULSE</span>
+        </div>
+        <div class="ticker-content-wrapper">
+            <div class="ticker-scroller" id="ticker-scroller">
+                <span class="ticker-item">⚡ <strong>ONE PIECE:</strong> Chapter 1135 Early Spoilers confirm Loki's Devil Fruit & Elbaf ancient hieroglyphics</span>
+                <span class="ticker-separator">🌈</span>
+                <span class="ticker-item">📺 <strong>JUJUTSU KAISEN:</strong> Culling Game Season 3 Official PV Trailer released by Studio MAPPA</span>
+                <span class="ticker-separator">🌈</span>
+                <span class="ticker-item">🔥 <strong>CHAINSAW MAN:</strong> Reze Arc Movie worldwide theatrical IMAX release date confirmed</span>
+                <span class="ticker-separator">🌈</span>
+                <span class="ticker-item">⚔️ <strong>BLEACH TYBW:</strong> Part 3 Episode 38 adds 15 minutes of new author-supervised canon battles</span>
+                <span class="ticker-separator">🌈</span>
+                <span class="ticker-item">🔮 <strong>HUNTER x HUNTER:</strong> Leaker confirms batch manuscripts completed for Jump return</span>
+            </div>
+        </div>
+        <div class="ticker-clock" id="jst-clock">--:--:-- JST</div>
+    </div>
+
+    <!-- Main Navigation Bar - Clean, Divided Features to Prevent Clutter -->
+    <header class="rainbow-navbar-wrapper">
+        <nav class="rainbow-navbar">
+            <!-- Brand Logo -->
+            <a href="#" class="brand-logo" id="nav-brand">
+                <div class="logo-symbol">
+                    <span class="rainbow-ring"></span>
+                    <span class="logo-kanji">虹</span>
+                </div>
+                <div class="logo-text">
+                    <span class="brand-title">NIJI PULSE</span>
+                    <span class="brand-subtitle">ANIME & MANGA DAILY</span>
+                </div>
+            </a>
+
+            <!-- Divided Feature Navigation Links -->
+            <ul class="nav-menu" id="nav-menu">
+                <li class="nav-item">
+                    <button class="nav-btn active" data-tab="all-feed" id="tab-all-feed">
+                        <span class="nav-icon">🌐</span>
+                        <span class="nav-label">All Feed</span>
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-btn" data-tab="anime-wire" id="tab-anime-wire">
+                        <span class="nav-icon">📺</span>
+                        <span class="nav-label">Anime Wire</span>
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-btn" data-tab="manga-radar" id="tab-manga-radar">
+                        <span class="nav-icon">📖</span>
+                        <span class="nav-label">Manga Radar</span>
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-btn" data-tab="leaks-rumors" id="tab-leaks-rumors">
+                        <span class="nav-icon">🔮</span>
+                        <span class="nav-label">Leaks & Rumors</span>
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-btn" data-tab="daily-schedule" id="tab-daily-schedule">
+                        <span class="nav-icon">📅</span>
+                        <span class="nav-label">Daily Schedule</span>
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-btn" data-tab="watchlist" id="tab-watchlist">
+                        <span class="nav-icon">🔖</span>
+                        <span class="nav-label">Watchlist</span>
+                        <span class="badge-count" id="watchlist-count">0</span>
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Navbar Actions: Search, Post Update, Anti-AI Shield -->
+            <div class="nav-actions">
+                <div class="nav-search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="global-search-input" placeholder="Search anime, manga, leaks, studios..." autocomplete="off">
+                    <button class="clear-search-btn" id="clear-search-btn" title="Clear search">✕</button>
+                </div>
+
+                <button class="post-update-btn rainbow-btn" id="btn-open-post-modal" title="Submit an anime or manga news update">
+                    <span class="plus-icon">➕</span>
+                    <span class="post-label">Post Update</span>
+                </button>
+
+                <!-- Anti-AI Defense Shield Status Indicator -->
+                <button class="ai-shield-btn" id="btn-open-shield-modal" title="Anti-AI Bot Shield Monitor">
+                    <span class="shield-icon">🛡️</span>
+                    <div class="shield-info">
+                        <span class="shield-title">ANTI-AI SHIELD</span>
+                        <span class="shield-status" id="shield-status-text">ACTIVE</span>
+                    </div>
+                    <span class="blocked-badge" id="nav-blocked-count" title="Blocked AI Crawlers">412 BLOCKED</span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Sub-Header Filter Bar (Clean & uncluttered) -->
+    <div class="filter-strip-wrapper">
+        <div class="filter-strip container">
+            <!-- Source Filter Segmented Control -->
+            <div class="source-segmented-control">
+                <button class="source-btn active" data-source="all" id="filter-src-all">All Sources</button>
+                <button class="source-btn official" data-source="official" id="filter-src-official">
+                    <span class="dot-green"></span> Official Confirmed
+                </button>
+                <button class="source-btn unofficial" data-source="unofficial" id="filter-src-unofficial">
+                    <span class="dot-yellow"></span> Leaks & Rumors
+                </button>
+            </div>
+
+            <!-- Category Quick Filter Pills -->
+            <div class="category-pills" id="category-pills">
+                <button class="cat-pill active" data-category="all">All Updates</button>
+                <button class="cat-pill" data-category="episode_drop">📺 Episodes</button>
+                <button class="cat-pill" data-category="chapter_release">📖 Chapters</button>
+                <button class="cat-pill" data-category="pv_trailer">🎬 Trailers</button>
+                <button class="cat-pill" data-category="anime_announcement">📣 Announcements</button>
+                <button class="cat-pill" data-category="manga_spoilers">⚠️ Spoilers & Scans</button>
+                <button class="cat-pill" data-category="industry_leak">🕵️ Leaks</button>
+            </div>
+
+            <!-- Franchise Quick Selector -->
+            <div class="franchise-select-wrapper">
+                <select id="franchise-selector" class="rainbow-select">
+                    <option value="all">⚡ All Franchises</option>
+                    <option value="One Piece">One Piece</option>
+                    <option value="Jujutsu Kaisen">Jujutsu Kaisen</option>
+                    <option value="Chainsaw Man">Chainsaw Man</option>
+                    <option value="Bleach">Bleach</option>
+                    <option value="Demon Slayer">Demon Slayer</option>
+                    <option value="Solo Leveling">Solo Leveling</option>
+                    <option value="Hunter x Hunter">Hunter x Hunter</option>
+                    <option value="Kagurabachi">Kagurabachi</option>
+                    <option value="Sakamoto Days">Sakamoto Days</option>
+                    <option value="DanDaDan">DanDaDan</option>
+                    <option value="Frieren">Frieren</option>
+                    <option value="Berserk">Berserk</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="main-content container">
+
+        <!-- Dynamic Rainbow Hero Section (Displayed on All Feed) -->
+        <section class="hero-banner-card" id="hero-banner">
+            <div class="hero-image-backdrop">
+                <img src="/assets/banner.jpg" alt="Rainbow Anime Horizon Banner" class="hero-bg-img" loading="eager">
+                <div class="hero-rainbow-gradient-overlay"></div>
+            </div>
+            <div class="hero-content">
+                <div class="hero-pill-badge">
+                    <span class="rainbow-sparkle">✨</span>
+                    <span>24/7 Real-Time Anime & Manga Telemetry</span>
+                </div>
+                <h1 class="hero-title">
+                    EVERY ANIME & MANGA UPDATE.<br>
+                    <span class="rainbow-gradient-text">OFFICIAL CANON & INSIDER LEAKS.</span>
+                </h1>
+                <p class="hero-description">
+                    Clean, uncluttered, unfiltered intelligence across Weekly Shonen Jump, Crunchyroll, Studio MAPPA, Ufotable, and insider leak circles. Strictly protected against AI scrapers.
+                </p>
+                <div class="hero-stats-row" id="hero-stats-row">
+                    <div class="stat-pill"><strong id="stat-total-updates">15</strong> Updates Today</div>
+                    <div class="stat-pill stat-blue"><strong id="stat-anime-count">10</strong> Anime Drops</div>
+                    <div class="stat-pill stat-orange"><strong id="stat-manga-count">5</strong> Manga Releases</div>
+                    <div class="stat-pill stat-yellow"><strong id="stat-leak-count">5</strong> Leaks / Rumors</div>
+                    <div class="stat-pill stat-violet">🛡️ <strong id="stat-blocked-ai">412</strong> AI Bots Blocked</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- View 1: Feed Content Stream (All Feed, Anime Wire, Manga Radar, Leaks) -->
+        <section class="feed-view-section" id="feed-view-section">
+            <div class="section-header">
+                <div class="section-title-wrap">
+                    <h2 class="section-title" id="current-view-title">Latest Anime & Manga Updates</h2>
+                    <p class="section-subtitle" id="current-view-subtitle">Chronological real-time coverage from Tokyo & global distributors</p>
+                </div>
+                <div class="section-sort-controls">
+                    <span class="sort-label">Sort By:</span>
+                    <button class="sort-pill active" data-sort="latest" id="sort-latest">Latest</button>
+                    <button class="sort-pill" data-sort="hot" id="sort-hot">🔥 Trending</button>
+                    <button class="sort-pill" data-sort="credibility" id="sort-credibility">💎 Most Verified</button>
+                </div>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div class="rainbow-loader-wrap" id="feed-loader" style="display: none;">
+                <div class="rainbow-spinner"></div>
+                <p>Synchronizing Japanese releases...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state-card" id="empty-state" style="display: none;">
+                <div class="empty-icon">🌈</div>
+                <h3>No Updates Found</h3>
+                <p>No anime or manga updates match your active filters or search query.</p>
+                <button class="rainbow-btn" id="btn-reset-filters">Reset All Filters</button>
+            </div>
+
+            <!-- Updates Grid -->
+            <div class="updates-grid" id="updates-grid">
+                <!-- Dynamically Populated by app.js -->
+            </div>
+        </section>
+
+        <!-- View 2: Daily Schedule Tab (Clean Calendar Layout) -->
+        <section class="schedule-view-section" id="schedule-view-section" style="display: none;">
+            <div class="section-header">
+                <div class="section-title-wrap">
+                    <h2 class="section-title">📅 Daily Release Schedule</h2>
+                    <p class="section-subtitle">Weekly broadcast calendar for anime simulcasts & official manga chapter drops</p>
+                </div>
+            </div>
+
+            <!-- Day Selector Tabs -->
+            <div class="schedule-days-bar" id="schedule-days-bar">
+                <button class="day-tab" data-day="Monday">Monday</button>
+                <button class="day-tab" data-day="Tuesday">Tuesday</button>
+                <button class="day-tab" data-day="Wednesday">Wednesday</button>
+                <button class="day-tab" data-day="Thursday">Thursday</button>
+                <button class="day-tab" data-day="Friday">Friday</button>
+                <button class="day-tab" data-day="Saturday">Saturday</button>
+                <button class="day-tab active" data-day="Sunday">Sunday</button>
+            </div>
+
+            <!-- Schedule Items Container -->
+            <div class="schedule-list-container" id="schedule-list-container">
+                <!-- Populated by app.js -->
+            </div>
+        </section>
+
+        <!-- View 3: Watchlist / Bookmarks Tab -->
+        <section class="watchlist-view-section" id="watchlist-view-section" style="display: none;">
+            <div class="section-header">
+                <div class="section-title-wrap">
+                    <h2 class="section-title">🔖 Your Saved Updates & Alerts</h2>
+                    <p class="section-subtitle">Track important anime episodes, leaks, and manga chapters you've pinned</p>
+                </div>
+                <button class="clear-watchlist-btn" id="btn-clear-watchlist">Clear All Saved</button>
+            </div>
+
+            <div class="updates-grid" id="watchlist-grid">
+                <!-- Populated by app.js -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal 1: Article Detail & Source Verification -->
+    <div class="modal-overlay" id="detail-modal">
+        <div class="modal-card detail-modal-card">
+            <button class="modal-close-btn" id="btn-close-detail-modal">&times;</button>
+            <div class="modal-rainbow-bar"></div>
+            <div class="modal-body" id="detail-modal-body">
+                <!-- Injected by app.js -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2: Post Anime / Manga Update (Contributor / Admin) -->
+    <div class="modal-overlay" id="post-modal">
+        <div class="modal-card post-modal-card">
+            <button class="modal-close-btn" id="btn-close-post-modal">&times;</button>
+            <div class="modal-rainbow-bar"></div>
+            <div class="modal-header">
+                <h3 class="modal-title">⚡ Post Anime & Manga Update</h3>
+                <p class="modal-desc">Contribute official announcements, episode/chapter releases, or insider leaks to the community wire.</p>
+            </div>
+            <form id="post-update-form" class="rainbow-form">
+                <div class="form-group">
+                    <label for="post-title">Update Headline *</label>
+                    <input type="text" id="post-title" required placeholder="e.g. One Piece Chapter 1136 Release Date & Colored Cover" maxlength="150">
+                </div>
+
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label for="post-type">Medium *</label>
+                        <select id="post-type" required>
+                            <option value="anime">📺 Anime</option>
+                            <option value="manga">📖 Manga</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="post-status">Classification *</label>
+                        <select id="post-status" required>
+                            <option value="official">🟢 Official Confirmed</option>
+                            <option value="unofficial">🟡 Unofficial / Leak / Rumor</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label for="post-franchise">Franchise / Series *</label>
+                        <input type="text" id="post-franchise" required placeholder="e.g. Jujutsu Kaisen, Bleach, One Piece">
+                    </div>
+                    <div class="form-group">
+                        <label for="post-category">Category *</label>
+                        <select id="post-category" required>
+                            <option value="anime_announcement">📣 Official Announcement</option>
+                            <option value="episode_drop">📺 Episode Drop</option>
+                            <option value="chapter_release">📖 Chapter Release</option>
+                            <option value="pv_trailer">🎬 PV Trailer / Teaser</option>
+                            <option value="manga_spoilers">⚠️ Manga Spoilers / Raw Scans</option>
+                            <option value="industry_leak">🕵️ Industry Leak</option>
+                            <option value="movie_premiere">🍿 Movie Premiere</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="post-summary">Quick Executive Summary *</label>
+                    <textarea id="post-summary" rows="2" required placeholder="Brief 1-2 sentence overview of the news or leak..." maxlength="300"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="post-content">Full Details & Analysis</label>
+                    <textarea id="post-content" rows="4" placeholder="Detailed breakdown, transcript notes, or insider spoiler text..."></textarea>
+                </div>
+
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label for="post-source">Source Name *</label>
+                        <input type="text" id="post-source" required placeholder="e.g. Weekly Shonen Jump, Pewpiece, Crunchyroll PR">
+                    </div>
+                    <div class="form-group">
+                        <label for="post-credibility">Credibility Score (1 - 100%)</label>
+                        <input type="number" id="post-credibility" min="1" max="100" value="95">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="post-source-url">Source Verification Link</label>
+                    <input type="url" id="post-source-url" placeholder="https://...">
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" id="btn-cancel-post">Cancel</button>
+                    <button type="submit" class="rainbow-btn" id="btn-submit-post">Publish Update to Wire</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 3: Anti-AI Shield Live Defense Inspector -->
+    <div class="modal-overlay" id="shield-modal">
+        <div class="modal-card shield-modal-card">
+            <button class="modal-close-btn" id="btn-close-shield-modal">&times;</button>
+            <div class="modal-rainbow-bar"></div>
+            <div class="modal-header">
+                <div class="shield-badge-row">
+                    <span class="shield-big-icon">🛡️</span>
+                    <div>
+                        <h3 class="modal-title">Anti-AI Bot Defense Engine</h3>
+                        <p class="modal-desc">Real-time heuristics blocking AI scrapers, LLM harvesters, and automated crawlers.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="shield-stats-grid">
+                <div class="shield-metric-box metric-red">
+                    <span class="metric-num" id="modal-blocked-count">412</span>
+                    <span class="metric-label">AI Crawlers Blocked</span>
+                </div>
+                <div class="shield-metric-box metric-green">
+                    <span class="metric-num">100%</span>
+                    <span class="metric-label">Human Otaku Access</span>
+                </div>
+                <div class="shield-metric-box metric-blue">
+                    <span class="metric-num">24 / 7</span>
+                    <span class="metric-label">Honeypot Traps Armed</span>
+                </div>
+            </div>
+
+            <div class="shield-details-box">
+                <h4>🚫 Blocked AI Bot Types & Directives:</h4>
+                <ul class="shield-rules-list">
+                    <li><span class="tag-red">GPTBot / ChatGPT-User:</span> Blocked via User-Agent & Robots.txt</li>
+                    <li><span class="tag-orange">ClaudeBot / Anthropic:</span> Blocked from scraping text summaries</li>
+                    <li><span class="tag-yellow">PerplexityBot:</span> Forbidden by HTTP 403 Forbidden interceptor</li>
+                    <li><span class="tag-green">Bytespider & CCBot:</span> Trapped in zero-opacity honeypot links</li>
+                    <li><span class="tag-blue">Automated WebDrivers:</span> Client-side navigator.webdriver traps active</li>
+                    <li><span class="tag-violet">Anti-AI Metadata:</span> <code>noai, noimageai, max-snippet:0</code> enforced</li>
+                </ul>
+            </div>
+
+            <div class="blocked-log-container">
+                <h4>Recent Blocked AI Crawlers Log:</h4>
+                <div class="blocked-log-table-wrap">
+                    <table class="blocked-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Bot Signature</th>
+                                <th>Defense Reason</th>
+                            </tr>
+                        </thead>
+                        <tbody id="blocked-log-body">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="shield-footer">
+                <button class="rainbow-btn" id="btn-run-honeypot-test">Test AI Honeypot Trap Simulation</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 4: Otaku Human Proof Challenge (Anti-AI Gate) -->
+    <div class="modal-overlay" id="ai-challenge-modal">
+        <div class="modal-card challenge-modal-card">
+            <div class="modal-rainbow-bar"></div>
+            <div class="modal-header text-center">
+                <span class="challenge-icon">⚡</span>
+                <h3 class="modal-title">Human Verification Required</h3>
+                <p class="modal-desc">Our Anti-AI Defense detected suspicious automated browser activity. Confirm you are a human anime fan to proceed.</p>
+            </div>
+            <div class="challenge-body">
+                <div class="challenge-question-box">
+                    <p><strong>Otaku Proof Question:</strong></p>
+                    <p>Who is the captain of the Straw Hat Pirates in <em>One Piece</em>?</p>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="human-answer-input" placeholder="Type your answer (e.g. Luffy)" autocomplete="off">
+                    <div id="human-verify-error" class="error-text" style="display: none;"></div>
+                </div>
+                <button class="rainbow-btn full-width" id="btn-verify-human">Verify Human Fan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Footer -->
+    <footer class="rainbow-footer">
+        <div class="footer-rainbow-border"></div>
+        <div class="footer-content container">
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    <span class="rainbow-ring-small"></span>
+                    <span class="brand-title">NIJI PULSE</span>
+                </div>
+                <p class="footer-tagline">
+                    The premiere rainbow spectrum terminal for daily anime & manga updates, leaks, schedules, and official Japanese press releases.
+                </p>
+            </div>
+            <div class="footer-links">
+                <div class="footer-col">
+                    <h5>Navigation</h5>
+                    <a href="#" data-tab="all-feed">All News Feed</a>
+                    <a href="#" data-tab="anime-wire">Anime Wire</a>
+                    <a href="#" data-tab="manga-radar">Manga Radar</a>
+                    <a href="#" data-tab="leaks-rumors">Leaks & Rumors</a>
+                </div>
+                <div class="footer-col">
+                    <h5>Security</h5>
+                    <a href="/robots.txt" target="_blank">Robots.txt (Anti-AI)</a>
+                    <a href="#" id="footer-shield-link">AI Blocker Status</a>
+                    <a href="/api/stats" target="_blank">Live Server JSON API</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom container">
+            <p>&copy; 2026 Niji Anime & Manga Pulse. Built for human anime & manga fans worldwide. All AI crawlers strictly denied.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="ai-blocker.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
