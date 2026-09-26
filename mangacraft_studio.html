@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MangaCraft Studio - Story to Manga Creator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Times New Roman Global Typography */
+        * {
+            font-family: "Times New Roman", Times, "Baskerville", Georgia, serif !important;
+        }
+
+        /* Rainbow Gradient utilities & animations */
+        .rainbow-text {
+            background: linear-gradient(135deg, #ff2a2a, #ff7e00, #ffd000, #00b04f, #0084ff, #8400ff, #e600a0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 300% 300%;
+            animation: rainbowFlow 8s ease infinite;
+        }
+
+        .rainbow-border {
+            border-image: linear-gradient(90deg, #ff0055, #ff7700, #ffdd00, #00d26a, #00a2ff, #9b51e0, #ff00aa) 1;
+        }
+
+        .rainbow-glow-btn {
+            background: linear-gradient(90deg, #ff3366, #ff9933, #33cc66, #3399ff, #9933ff);
+            background-size: 250% 250%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        .rainbow-glow-btn:hover {
+            background-position: right center;
+            box-shadow: 0 6px 20px rgba(0, 162, 255, 0.45);
+            transform: translateY(-1px);
+        }
+
+        .rainbow-bar {
+            height: 4px;
+            background: linear-gradient(90deg, #ff1a1a, #ff8000, #ffff00, #33cc33, #0099ff, #6600cc, #ff0099);
+            background-size: 400% 100%;
+            animation: rainbowSlide 6s linear infinite;
+        }
+
+        @keyframes rainbowFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes rainbowSlide {
+            0% { background-position: 0% 0; }
+            100% { background-position: 100% 0; }
+        }
+
+        /* Manga Halftone Screen Pattern */
+        .manga-halftone {
+            background-color: #ffffff;
+            background-image: radial-gradient(#111 15%, transparent 16%), radial-gradient(#222 15%, transparent 16%);
+            background-size: 8px 8px;
+            background-position: 0 0, 4px 4px;
+            opacity: 0.15;
+        }
+
+        .speed-lines {
+            background: repeating-conic-gradient(from 0deg, rgba(0,0,0,0.18) 0deg 3deg, transparent 3deg 12deg);
+        }
+
+        /* Speech bubble shapes */
+        .speech-bubble {
+            position: relative;
+            background: #ffffff;
+            border: 3px solid #111111;
+            border-radius: 20px;
+            padding: 10px 14px;
+            font-size: 14px;
+            line-height: 1.25;
+            color: #000;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.2);
+            user-select: none;
+            cursor: move;
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 20%;
+            border-width: 12px 10px 0;
+            border-style: solid;
+            border-color: #111111 transparent;
+            display: block;
+            width: 0;
+        }
+
+        .speech-bubble::before {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 21%;
+            border-width: 9px 8px 0;
+            border-style: solid;
+            border-color: #ffffff transparent;
+            display: block;
+            width: 0;
+            z-index: 1;
+        }
+
+        /* Manga action text */
+        .sfx-text {
+            text-shadow: 3px 3px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000;
+            font-weight: 900;
+            letter-spacing: 2px;
+            transform: skew(-8deg);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #ff0077, #7700ff);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-neutral-900 min-h-screen flex flex-col antialiased selection:bg-purple-200">
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md shadow-sm border-b border-neutral-200">
+        <div class="rainbow-bar"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('story')">
+                <div class="w-11 h-11 rounded-lg border-2 border-black flex items-center justify-center bg-black text-white text-2xl font-black shadow-md">
+                    <span class="rainbow-text">漫</span>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold tracking-tight flex items-center gap-2">
+                        <span>MangaCraft</span>
+                        <span class="rainbow-text text-xl">Studio</span>
+                    </h1>
+                    <p class="text-xs text-neutral-500 tracking-wider uppercase">Story-to-Manga Creation Platform</p>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <nav class="hidden md:flex items-center space-x-1 lg:space-x-2">
+                <button onclick="switchTab('story')" id="nav-story" class="nav-btn px-4 py-2 rounded-lg text-base font-semibold text-neutral-800 hover:text-black hover:bg-neutral-100 transition flex items-center gap-2 border-b-2 border-transparent">
+                    <i class="fa-solid fa-pen-nib text-indigo-600"></i> Story to Manga
+                </button>
+                <button onclick="switchTab('studio')" id="nav-studio" class="nav-btn px-4 py-2 rounded-lg text-base font-semibold text-neutral-600 hover:text-black hover:bg-neutral-100 transition flex items-center gap-2 border-b-2 border-transparent">
+                    <i class="fa-solid fa-layer-group text-purple-600"></i> Manga Studio Canvas
+                </button>
+                <button onclick="switchTab('safety')" id="nav-safety" class="nav-btn px-4 py-2 rounded-lg text-base font-semibold text-neutral-600 hover:text-black hover:bg-neutral-100 transition flex items-center gap-2 border-b-2 border-transparent">
+                    <i class="fa-solid fa-shield-halved text-rose-500"></i> Content Safety & Policy
+                </button>
+                <button onclick="switchTab('reader')" id="nav-reader" class="nav-btn px-4 py-2 rounded-lg text-base font-semibold text-neutral-600 hover:text-black hover:bg-neutral-100 transition flex items-center gap-2 border-b-2 border-transparent">
+                    <i class="fa-solid fa-book-open-reader text-emerald-600"></i> Export & Reader
+                </button>
+            </nav>
+
+            <!-- Verification & Action status -->
+            <div class="flex items-center space-x-3">
+                <div id="human-badge" class="flex items-center gap-2 px-3 py-1.5 rounded-full border border-neutral-300 text-xs font-semibold bg-neutral-100 cursor-pointer" onclick="showCaptchaModal()">
+                    <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse" id="human-indicator"></span>
+                    <span id="human-label">AI Guard: Unverified</span>
+                </div>
+                <button onclick="quickGenerateDemo()" class="rainbow-glow-btn text-sm px-4 py-2 rounded-lg flex items-center gap-2 shadow">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>Quick Demo</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <div class="md:hidden flex overflow-x-auto border-t border-neutral-200 px-3 py-2 space-x-1 text-sm bg-neutral-50">
+            <button onclick="switchTab('story')" class="mobile-nav-btn px-3 py-1.5 whitespace-nowrap rounded font-semibold text-neutral-900 bg-white shadow-sm" data-tab="story">Story</button>
+            <button onclick="switchTab('studio')" class="mobile-nav-btn px-3 py-1.5 whitespace-nowrap rounded font-semibold text-neutral-600" data-tab="studio">Studio Canvas</button>
+            <button onclick="switchTab('safety')" class="mobile-nav-btn px-3 py-1.5 whitespace-nowrap rounded font-semibold text-neutral-600" data-tab="safety">Safety Policy</button>
+            <button onclick="switchTab('reader')" class="mobile-nav-btn px-3 py-1.5 whitespace-nowrap rounded font-semibold text-neutral-600" data-tab="reader">Export / Read</button>
+        </div>
+    </header>
+
+    <div id="captcha-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-7 border-4 border-black shadow-2xl relative">
+            <div class="rainbow-bar -mt-7 -mx-7 mb-6 rounded-t-xl"></div>
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-xl border-2 border-black">
+                    <i class="fa-solid fa-user-shield"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-neutral-900">Human Manga Artist Verification</h3>
+                    <p class="text-xs text-neutral-500">Autonomous AI bots & automated scrapers are blocked.</p>
+                </div>
+            </div>
+
+            <div class="p-4 bg-neutral-100 rounded-xl border border-neutral-300 mb-5">
+                <p class="text-sm font-semibold mb-2 text-neutral-800">Manga Action Challenge:</p>
+                <p id="captcha-question" class="text-base italic text-neutral-700 font-bold mb-3"></p>
+                <div id="captcha-options" class="grid grid-cols-2 gap-2.5">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+
+            <div class="text-xs text-neutral-500 italic mb-5 leading-tight">
+                * Note: Automated agents, LLM autonomous browsers, and scrapers are strictly blocked to preserve human author credits.
+            </div>
+
+            <button onclick="verifyCaptchaAnswer()" id="verify-submit-btn" disabled class="w-full py-2.5 rounded-lg bg-neutral-300 text-neutral-500 font-bold tracking-wide transition cursor-not-allowed">
+                Confirm Human Creator Status
+            </button>
+        </div>
+    </div>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col">
+
+        <!-- TAB 1: STORY TO MANGA ENGINE -->
+        <section id="tab-story" class="tab-content block">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                
+                <!-- Left Input: Story & Script Area -->
+                <div class="lg:col-span-6 bg-white border-2 border-neutral-800 rounded-2xl p-6 shadow-md relative">
+                    <div class="flex items-center justify-between mb-4 border-b pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-1 text-xs font-bold bg-neutral-900 text-white rounded">STEP 1</span>
+                            <h2 class="text-xl font-bold">Write Your Story / Script</h2>
+                        </div>
+                        <span class="text-xs text-neutral-500">Battle & Action allowed • Nudity strictly banned</span>
+                    </div>
+
+                    <p class="text-sm text-neutral-600 mb-4">
+                        Type or paste your narrative. MangaCraft will extract pacing, dialogue, and explosive action scenes to construct authentic manga pages.
+                    </p>
+
+                    <!-- Story text input -->
+                    <div class="relative mb-3">
+                        <textarea id="story-input" rows="12" class="w-full p-4 border-2 border-neutral-300 focus:border-black focus:outline-none rounded-xl text-neutral-900 text-base leading-relaxed resize-none shadow-inner" placeholder="Example:
+Ren stood atop the ruined clock tower, blood dripping from his cracked knuckles. The cyborg assassin lunged through the shattered stained glass with twin energy blades glowing crimson.
+
+'You cannot stop the protocol!' roared the assassin.
+Ren parried the strike with an immense kinetic burst. 'I don't need a protocol. I have resolve!'
+
+A cataclysmic shockwave tore through the chamber as their fists collided with deafening thunder."></textarea>
+                    </div>
+
+                    <!-- Preset Quick Pickers -->
+                    <div class="mb-5 flex flex-wrap gap-2 items-center">
+                        <span class="text-xs font-bold text-neutral-500 uppercase tracking-wider">Premade Prompts:</span>
+                        <button onclick="loadTemplate('cyberpunk')" class="text-xs px-2.5 py-1 bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 rounded font-medium">Cyberpunk Duel</button>
+                        <button onclick="loadTemplate('samurai')" class="text-xs px-2.5 py-1 bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 rounded font-medium">Samurai Katana Clash</button>
+                        <button onclick="loadTemplate('superhero')" class="text-xs px-2.5 py-1 bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 rounded font-medium">Martial Arts Showdown</button>
+                        <button onclick="testSafetyTrigger()" class="text-xs px-2.5 py-1 bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-300 rounded font-semibold">Test NSFW Trigger</button>
+                    </div>
+
+                    <!-- Content Safety Live Indicator -->
+                    <div id="safety-alert" class="hidden mb-4 p-3 rounded-lg border text-sm font-medium"></div>
+
+                    <!-- Controls & Generate Button -->
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-neutral-200">
+                        <div class="flex items-center space-x-3 w-full sm:w-auto">
+                            <label class="text-xs font-bold text-neutral-600 uppercase">Panel Count:</label>
+                            <select id="panel-count" class="border border-neutral-300 rounded-lg px-2.5 py-1.5 text-sm bg-white font-semibold">
+                                <option value="3">3 Panels (Striking Climax)</option>
+                                <option value="4" selected>4 Panels (Classic Yonkoma / Action)</option>
+                                <option value="5">5 Panels (Cinematic Page)</option>
+                            </select>
+                        </div>
+                        <button onclick="generateMangaFromStory()" id="generate-btn" class="rainbow-glow-btn w-full sm:w-auto px-6 py-3 rounded-xl text-base flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            <span>Construct Manga Panels</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Preview & Breakdown -->
+                <div class="lg:col-span-6 bg-white border-2 border-neutral-800 rounded-2xl p-6 shadow-md flex flex-col justify-between min-h-[580px]">
+                    <div>
+                        <div class="flex items-center justify-between mb-4 border-b pb-3">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2.5 py-1 text-xs font-bold bg-neutral-900 text-white rounded">STEP 2</span>
+                                <h2 class="text-xl font-bold">Story Breakdown & Tone</h2>
+                            </div>
+                            <span id="panels-generated-badge" class="text-xs font-semibold px-2 py-1 bg-green-100 text-green-800 rounded hidden">Ready</span>
+                        </div>
+
+                        <!-- Parsing Feedback Container -->
+                        <div id="script-analysis-box" class="space-y-4">
+                            <div class="border-2 border-dashed border-neutral-300 rounded-xl p-8 text-center text-neutral-500">
+                                <i class="fa-solid fa-scroll text-4xl mb-3 text-neutral-300"></i>
+                                <h4 class="text-lg font-bold text-neutral-700">Awaiting Your Story Input</h4>
+                                <p class="text-sm max-w-sm mx-auto mt-1">
+                                    Enter your script and click "Construct Manga Panels". The engine parses character dialogue, visual action cues, dynamic speedlines, and sound effects.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div id="parsed-panels-list" class="space-y-3 mt-4 hidden">
+                            <!-- Dynamic parsed panel preview items -->
+                        </div>
+                    </div>
+
+                    <!-- Jump to Studio CTA -->
+                    <div id="jump-to-studio-cta" class="mt-6 pt-4 border-t border-neutral-200 hidden">
+                        <button onclick="switchTab('studio')" class="w-full py-3 bg-neutral-900 text-white font-bold rounded-xl hover:bg-black transition flex items-center justify-center gap-2 shadow">
+                            <span>Open in Manga Studio Editor</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="tab-studio" class="tab-content hidden">
+            <!-- Studio Toolbar -->
+            <div class="bg-white border-2 border-neutral-800 rounded-xl p-4 mb-6 shadow-md flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center flex-wrap gap-2">
+                    <span class="text-xs font-bold uppercase text-neutral-400 mr-2">Tools:</span>
+                    <button onclick="addSpeechBubble()" class="px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 rounded-lg text-sm font-semibold flex items-center gap-1.5">
+                        <i class="fa-regular fa-comment-dots text-blue-600"></i> + Dialog Bubble
+                    </button>
+                    <button onclick="addShoutBubble()" class="px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 rounded-lg text-sm font-semibold flex items-center gap-1.5">
+                        <i class="fa-solid fa-burst text-rose-500"></i> + Action SFX
+                    </button>
+                    <button onclick="addScreentoneEffect()" class="px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 rounded-lg text-sm font-semibold flex items-center gap-1.5">
+                        <i class="fa-solid fa-lines-leaning text-neutral-700"></i> Toggle Speedlines
+                    </button>
+                    <button onclick="addNewBlankPanel()" class="px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 rounded-lg text-sm font-semibold flex items-center gap-1.5">
+                        <i class="fa-solid fa-plus text-green-600"></i> + Add Panel
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <button onclick="clearCurrentPage()" class="px-3 py-1.5 text-xs text-rose-700 hover:bg-rose-50 border border-rose-300 rounded-lg font-bold">
+                        <i class="fa-solid fa-trash-can mr-1"></i> Reset Canvas
+                    </button>
+                    <button onclick="switchTab('reader')" class="rainbow-glow-btn px-4 py-1.5 text-sm rounded-lg font-bold">
+                        <i class="fa-solid fa-eye mr-1"></i> View Reader Mode
+                    </button>
+                </div>
+            </div>
+
+            <!-- Studio Board & Panels -->
+            <div class="bg-neutral-200 p-4 sm:p-8 rounded-2xl border-4 border-neutral-900 shadow-xl overflow-hidden flex justify-center">
+                <!-- A4 Aspect Manga Page Sheet -->
+                <div id="manga-page-sheet" class="bg-white border-4 border-black p-6 sm:p-8 shadow-2xl w-full max-w-4xl min-h-[900px] flex flex-col justify-between relative transition-all">
+                    
+                    <!-- Manga Page Header Meta -->
+                    <div class="flex justify-between items-center text-xs border-b pb-2 mb-4 text-neutral-400 tracking-wider">
+                        <span>PAGE: 01 &nbsp;|&nbsp; CHAPTER: PILOT</span>
+                        <span class="font-bold text-neutral-700">MANGACRAFT MANUSCRIPT</span>
+                        <span>READ RIGHT-TO-LEFT ➔</span>
+                    </div>
+
+                    <!-- Dynamic Panels Container -->
+                    <div id="manga-panels-container" class="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1">
+                        <!-- Panels are populated dynamically -->
+                    </div>
+
+                    <!-- Manga Page Footer -->
+                    <div class="flex justify-between items-center text-xs pt-3 mt-4 border-t text-neutral-400">
+                        <span>STRICT CONTENT SAFETY VERIFIED</span>
+                        <div class="flex items-center gap-1">
+                            <span class="rainbow-text font-black text-sm">MangaCraft</span>
+                            <span>Standard A4 Inked Edition</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-safety" class="tab-content hidden">
+            <div class="max-w-4xl mx-auto space-y-6">
+                
+                <!-- Safety Header Banner -->
+                <div class="bg-white border-2 border-neutral-900 rounded-2xl p-6 sm:p-8 shadow-md">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-14 h-14 rounded-2xl bg-neutral-900 text-white flex items-center justify-center text-3xl shadow">
+                            <i class="fa-solid fa-shield-virus text-rose-400"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-black">Content Safety & Enforcement Matrix</h2>
+                            <p class="text-sm text-neutral-500">Dual-layer automated rulebook for manga script & visual rendering.</p>
+                        </div>
+                    </div>
+                    <div class="rainbow-bar rounded my-4"></div>
+                    <p class="text-base text-neutral-700 leading-relaxed">
+                        To maintain compliance with manga publishing standards while fostering boundless creative energy for martial arts, supernatural fantasy, and battle shonen, MangaCraft Studio implements strict rules:
+                    </p>
+                </div>
+
+                <!-- Comparison Matrix -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <!-- Strictly Prohibited: Nudity & NSFW -->
+                    <div class="bg-rose-50 border-2 border-rose-600 rounded-2xl p-6 shadow-sm">
+                        <div class="flex items-center gap-3 mb-3 text-rose-800">
+                            <i class="fa-solid fa-ban text-2xl"></i>
+                            <h3 class="text-xl font-black">STRICTLY BLOCKED: Nudity & NSFW</h3>
+                        </div>
+                        <p class="text-sm text-rose-900 mb-4">
+                            Any form of pornography, sexualized anatomy, nudity, ecchi exploitation, or explicit intimacy is caught and rejected instantly prior to storyboard generation.
+                        </p>
+                        <div class="bg-white p-3 rounded-lg border border-rose-300 text-xs text-rose-800 space-y-1">
+                            <div class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-xmark text-rose-600"></i> Anatomical Nudity / Explicit Parts</div>
+                            <div class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-xmark text-rose-600"></i> Sexually Suggestive Poses</div>
+                            <div class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-xmark text-rose-600"></i> Erotic Romance & NSFW Scripts</div>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-rose-200">
+                            <span class="text-xs font-bold uppercase tracking-wider text-rose-700">Enforcement Action:</span>
+                            <p class="text-xs text-rose-800 mt-1">Immediate generation abortion, user notification, canvas freeze.</p>
+                        </div>
+                    </div>
+
+                    <!-- Permitted & Celebrated: Action Violence -->
+                    <div class="bg-emerald-50 border-2 border-emerald-600 rounded-2xl p-6 shadow-sm">
+                        <div class="flex items-center gap-3 mb-3 text-emerald-800">
+                            <i class="fa-solid fa-hand-fist text-2xl"></i>
+                            <h3 class="text-xl font-black">ALLOWED: Manga Battle Violence</h3>
+                        </div>
+                        <p class="text-sm text-emerald-900 mb-4">
+                            High-stakes shonen and seinen battle choreography, martial arts combat, energy blasts, sword clashes, dramatic injuries, and dark fantasy showdowns are authorized.
+                        </p>
+                        <div class="bg-white p-3 rounded-lg border border-emerald-300 text-xs text-emerald-800 space-y-1">
+                            <div class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-check text-emerald-600"></i> Martial Arts & Hand-to-Hand Combat</div>
+                            <div class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-check text-emerald-600"></i> Katana Duels, Mecha Explosions, SFX</div>
+                            <div class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-check text-emerald-600"></i> Bruises, Battle Damage & Heroic Resolve</div>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-emerald-200">
+                            <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Design Purpose:</span>
+                            <p class="text-xs text-emerald-800 mt-1">Ensures authors retain freedom to write gripping, dramatic climaxes.</p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Test Interactive Safety Filter -->
+                <div class="bg-white border-2 border-neutral-800 rounded-2xl p-6 shadow-md">
+                    <h3 class="text-lg font-bold mb-2">Interactive Safety Verification Sandbox</h3>
+                    <p class="text-sm text-neutral-600 mb-3">Type a sentence below to test how our real-time lexical inspector approves battle violence and intercepts forbidden sexual content.</p>
+                    <div class="flex gap-2">
+                        <input id="test-filter-input" type="text" placeholder="e.g. 'He slashed the monster with his blazing broadsword'" class="flex-1 border-2 border-neutral-300 p-2.5 rounded-lg text-sm focus:border-black focus:outline-none">
+                        <button onclick="runFilterTest()" class="px-5 py-2.5 bg-neutral-900 text-white font-bold rounded-lg hover:bg-black transition text-sm">
+                            Evaluate Input
+                        </button>
+                    </div>
+                    <div id="filter-test-result" class="mt-3 text-sm font-semibold hidden p-3 rounded-lg border"></div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="tab-reader" class="tab-content hidden">
+            <div class="max-w-4xl mx-auto space-y-6">
+                
+                <!-- Controls bar -->
+                <div class="bg-white border-2 border-neutral-800 rounded-xl p-4 shadow-md flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-sm font-bold uppercase">Reader Mode:</span>
+                        <div class="flex rounded-lg border border-neutral-300 p-1 bg-neutral-100 text-xs font-bold">
+                            <button id="view-mode-webtoon" onclick="setReaderMode('webtoon')" class="px-3 py-1 rounded bg-white shadow-sm text-neutral-900">Vertical Webtoon</button>
+                            <button id="view-mode-single" onclick="setReaderMode('single')" class="px-3 py-1 rounded text-neutral-600">Tankobon Page</button>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center space-x-2">
+                        <button onclick="printMangaPDF()" class="px-4 py-2 border-2 border-neutral-800 hover:bg-neutral-100 rounded-lg text-sm font-bold flex items-center gap-1.5 transition">
+                            <i class="fa-solid fa-file-pdf text-rose-600"></i> Export PDF / Print
+                        </button>
+                        <button onclick="copyShareLink()" class="rainbow-glow-btn px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1.5">
+                            <i class="fa-solid fa-share-nodes"></i> Share Chapter
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Reader Container -->
+                <div id="reader-stage" class="bg-neutral-900 p-6 sm:p-10 rounded-2xl shadow-2xl flex flex-col items-center">
+                    <div id="reader-content" class="w-full max-w-xl space-y-4">
+                        <!-- Populated by Reader render function -->
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <div id="toast-box" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+        <div id="toast-inner" class="bg-neutral-900 text-white border-2 border-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-sm font-semibold">
+            <i id="toast-icon" class="fa-solid fa-info-circle text-lg"></i>
+            <span id="toast-message">Message text</span>
+        </div>
+    </div>
+
+    <script>
+        const APP_STATE = {
+            activeTab: 'story',
+            isHumanVerified: false,
+            readerMode: 'webtoon',
+            panels: [],
+            safetyKeywordsBanned: [
+                'nude', 'naked', 'nudity', 'nsfw', 'porn', 'hentai', 'penis', 'vagina', 'breasts', 
+                'boobs', 'clitoris', 'erotic', 'fellatio', 'sexual', 'intercourse', 'strip', 'undress', 
+                'underwear', 'panties', 'bra', 'orgasm', 'genitals', 'explicit'
+            ],
+            actionKeywordsAllowed: [
+                'blood', 'punch', 'kick', 'blade', 'katana', 'sword', 'slash', 'strike', 'explode',
+                'explosion', 'shatter', 'battle', 'wound', 'assassin', 'blast', 'laser', 'fist', 
+                'gore', 'bruise', 'crush', 'decapitate', 'pierce', 'duel', 'fight'
+            ]
+        };
+
+        const TEMPLATES = {
+            cyberpunk: `Ren stood atop the neo-tokyo neon tower, cybernetic arm sparking with high voltage.
+Below him, the steel juggernaut mechanoid charged, crushing concrete under hydraulic treads.
+
+'TARGET ACQUIRED,' blared the drone.
+Ren leaped into the storm, blade igniting with electric blue energy. 'Not today, machine!'
+
+A colossal shockwave erupted as his titanium katana severed the power core.`,
+            
+            samurai: `The bamboo grove went dead silent as fog rolled over the muddy clearing.
+Master Jin drew his ancient katana an inch from its lacquered scabbard.
+
+His rival smiled faintly. 'Three paces, Jin. One slash decides our clan's fate.'
+In a blinding instant faster than thunder, both swordsmen crossed in a deadly flash.
+
+Blood sprayed across the autumn leaves as Jin quietly sheathed his steel.`,
+
+            superhero: `The meteor villain smashed into the city square, sending shockwaves through the asphalt.
+Captain Aegis landed with an earth-shattering stomp, shield raised against the searing plasma.
+
+'You cannot withstand total annihilation!' screamed the villain.
+Aegis surged forward with blinding velocity, landing a supersonic punch straight into the core!
+
+KABOOM! The blast illuminated the evening sky like a rising star.`
+        };
+
+        const BOT_QUESTIONS = [
+            {
+                q: "A swordsman delivers a high-speed downward slash. What manga sound effect (SFX) best fits?",
+                options: ["ZASH!!", "GUGUGU...", "BEEP-BOOP", "ZZZZZ..."],
+                correct: 0
+            },
+            {
+                q: "When a martial artist channels intense ki aura before combat, speedlines typically:",
+                options: ["Radiate outward from character", "Form horizontal spreadsheet rows", "Fade completely to blank white", "Disappear into code"],
+                correct: 0
+            },
+            {
+                q: "In shonen manga, what speech bubble style is utilized for a thunderous war cry?",
+                options: ["Jagged explosive burst bubble", "Tiny whisper dotted bubble", "Square numeric table", "Smooth rounded cloud"],
+                correct: 0
+            }
+        ];
+
+        let currentCaptcha = BOT_QUESTIONS[0];
+        let selectedCaptchaIndex = null;
+
+        window.onload = function() {
+            initCaptcha();
+            checkBotSignatures();
+            loadTemplate('cyberpunk');
+            generateMangaFromStory(true);
+        };
+
+        function checkBotSignatures() {
+            // Check headless chrome, webdriver flags
+            const isBot = navigator.webdriver || window._phantom || window.callPhantom;
+            if (isBot) {
+                document.body.innerHTML = `
+                    <div style="background:#000; color:#ff3333; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:'Times New Roman',serif; text-align:center; padding:20px;">
+                        <h1 style="font-size:32px;">[ACCESS DENIED: AUTOMATED AGENT DETECTED]</h1>
+                        <p style="font-size:18px; max-width:600px; margin-top:15px; color:#fff;">
+                            MangaCraft Studio has blocked automated headless scripts and AI crawler spiders to protect human creator rights and artwork.
+                        </p>
+                    </div>`;
+                return;
+            }
+        }
+
+        function initCaptcha() {
+            currentCaptcha = BOT_QUESTIONS[Math.floor(Math.random() * BOT_QUESTIONS.length)];
+            document.getElementById('captcha-question').textContent = currentCaptcha.q;
+            
+            const container = document.getElementById('captcha-options');
+            container.innerHTML = '';
+            currentCaptcha.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = "p-3 text-sm font-bold border-2 border-neutral-300 rounded-lg hover:border-black transition text-left bg-white";
+                btn.textContent = opt;
+                btn.onclick = () => selectCaptchaOption(idx, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function selectCaptchaOption(index, btnElem) {
+            selectedCaptchaIndex = index;
+            const container = document.getElementById('captcha-options');
+            Array.from(container.children).forEach(c => {
+                c.classList.remove('border-black', 'bg-neutral-200');
+                c.classList.add('border-neutral-300', 'bg-white');
+            });
+            btnElem.classList.remove('border-neutral-300', 'bg-white');
+            btnElem.classList.add('border-black', 'bg-neutral-200');
+
+            const submitBtn = document.getElementById('verify-submit-btn');
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('bg-neutral-300', 'text-neutral-500', 'cursor-not-allowed');
+            submitBtn.classList.add('rainbow-glow-btn', 'text-white', 'cursor-pointer');
+        }
+
+        function showCaptchaModal() {
+            document.getElementById('captcha-modal').classList.remove('hidden');
+        }
+
+        function verifyCaptchaAnswer() {
+            if (selectedCaptchaIndex === currentCaptcha.correct) {
+                APP_STATE.isHumanVerified = true;
+                document.getElementById('captcha-modal').classList.add('hidden');
+                
+                const badge = document.getElementById('human-badge');
+                const indicator = document.getElementById('human-indicator');
+                const label = document.getElementById('human-label');
+
+                indicator.classList.remove('bg-rose-500');
+                indicator.classList.add('bg-green-500');
+                label.textContent = "Human Creator: Verified";
+                badge.classList.remove('border-neutral-300');
+                badge.classList.add('border-green-600', 'bg-green-50', 'text-green-800');
+
+                showToast("Human status confirmed! AI bot filters passed.", "success");
+            } else {
+                showToast("Incorrect answer. Please verify again.", "error");
+                initCaptcha();
+            }
+        }
+
+        function checkSafety(text) {
+            const lower = text.toLowerCase();
+            const foundNudity = [];
+            const foundViolence = [];
+
+            // Check blocked keywords
+            APP_STATE.safetyKeywordsBanned.forEach(kw => {
+                // Word boundary test
+                const regex = new RegExp(`\\b${kw}\\b`, 'i');
+                if (regex.test(lower)) {
+                    foundNudity.push(kw);
+                }
+            });
+
+            // Check action violence allowed
+            APP_STATE.actionKeywordsAllowed.forEach(kw => {
+                const regex = new RegExp(`\\b${kw}\\b`, 'i');
+                if (regex.test(lower)) {
+                    foundViolence.push(kw);
+                }
+            });
+
+            return {
+                isBlocked: foundNudity.length > 0,
+                nudityMatches: foundNudity,
+                violenceMatches: foundViolence
+            };
+        }
+
+        function runFilterTest() {
+            const input = document.getElementById('test-filter-input').value;
+            const resBox = document.getElementById('filter-test-result');
+            if (!input.trim()) return;
+
+            const safety = checkSafety(input);
+            resBox.classList.remove('hidden', 'bg-rose-100', 'text-rose-900', 'border-rose-400', 'bg-emerald-100', 'text-emerald-900', 'border-emerald-400');
+
+            if (safety.isBlocked) {
+                resBox.classList.add('bg-rose-100', 'text-rose-900', 'border-rose-400');
+                resBox.innerHTML = `
+                    <div class="flex items-center gap-2 mb-1">
+                        <i class="fa-solid fa-triangle-exclamation text-rose-600"></i>
+                        <span class="font-bold">STATUS: REJECTED & BLOCKED (Nudity/NSFW Policy)</span>
+                    </div>
+                    <div class="text-xs">Detected forbidden adult token(s): <b>${safety.nudityMatches.join(', ')}</b>. Generation immediately prohibited.</div>
+                `;
+            } else {
+                resBox.classList.add('bg-emerald-100', 'text-emerald-900', 'border-emerald-400');
+                resBox.innerHTML = `
+                    <div class="flex items-center gap-2 mb-1">
+                        <i class="fa-solid fa-circle-check text-emerald-600"></i>
+                        <span class="font-bold">STATUS: APPROVED FOR MANGA ADAPTATION</span>
+                    </div>
+                    <div class="text-xs">No adult/nudity triggers found. Combat & narrative action tokens detected: <b>${safety.violenceMatches.length > 0 ? safety.violenceMatches.join(', ') : 'Pacing verified'}</b>.</div>
+                `;
+            }
+        }
+
+        function loadTemplate(type) {
+            if (TEMPLATES[type]) {
+                document.getElementById('story-input').value = TEMPLATES[type];
+            }
+        }
+
+        function testSafetyTrigger() {
+            document.getElementById('story-input').value = "The warrior removed her clothes completely naked while resting beside the pond before the final battle.";
+            generateMangaFromStory();
+        }
+
+        function generateMangaFromStory(silent = false) {
+            const storyText = document.getElementById('story-input').value.trim();
+            const safetyAlert = document.getElementById('safety-alert');
+
+            if (!storyText) {
+                if (!silent) showToast("Please input a story or script first.", "error");
+                return;
+            }
+
+            // Execute Safety Filter
+            const safety = checkSafety(storyText);
+            if (safety.isBlocked) {
+                safetyAlert.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'border-green-300');
+                safetyAlert.classList.add('bg-rose-100', 'text-rose-900', 'border-rose-300');
+                safetyAlert.innerHTML = `
+                    <div class="flex items-center gap-2 font-bold mb-1">
+                        <i class="fa-solid fa-shield-xmark text-rose-600"></i>
+                        <span>CONTENT SAFETY VIOLATION DETECTED</span>
+                    </div>
+                    <p class="text-xs">
+                        MangaCraft Studio has blocked this story generation due to detected prohibited adult/nudity terminology: 
+                        <span class="underline font-bold">${safety.nudityMatches.join(', ')}</span>.
+                        Please remove explicit/erotic descriptions. High-intensity battle action is fully permitted.
+                    </p>
+                `;
+                if (!silent) showToast("Story rejected: Nudity/NSFW is strictly blocked.", "error");
+                return;
+            } else {
+                safetyAlert.classList.remove('hidden', 'bg-rose-100', 'text-rose-900', 'border-rose-300');
+                safetyAlert.classList.add('bg-emerald-50', 'text-emerald-900', 'border-emerald-300');
+                safetyAlert.innerHTML = `
+                    <div class="flex items-center gap-2 font-bold text-xs">
+                        <i class="fa-solid fa-shield-check text-emerald-600"></i>
+                        <span>SAFETY AUDIT PASSED: Battle Action & Story Narrative Approved.</span>
+                    </div>
+                `;
+            }
+
+            // Parse Paragraphs into Panels
+            const paragraphs = storyText.split(/\n+/).map(p => p.trim()).filter(p => p.length > 0);
+            const panelCountChoice = parseInt(document.getElementById('panel-count').value, 10);
+            
+            const panels = [];
+            const actionSfxList = ['BAM!!', 'SLASH!!', 'DODODO', 'KRA-KABOOM!', 'FWOOSH', 'ZASHH!'];
+            const angles = ['WIDE ESTABLISHING SHOT', 'DYNAMIC LOW-ANGLE', 'CLOSE-UP DRAMATIC CLIMAX', 'DUTCH ANGLE IMPACT'];
+
+            // Synthesize Panels
+            for (let i = 0; i < panelCountChoice; i++) {
+                const sourceText = paragraphs[i % paragraphs.length] || "The combatants brace for the inevitable clash.";
+                
+                // Extract possible dialogue inside quotes
+                const dialogMatch = sourceText.match(/["'](.*?)["']/);
+                const dialogue = dialogMatch ? dialogMatch[1] : (i === 1 ? "There is no turning back now!" : (i === 2 ? "TAKE THIS!!" : ""));
+
+                // Detect action intensity
+                const hasAction = /strike|blade|katana|punch|crush|shatter|blood|blast|explod|kill|cut|parried|fist/i.test(sourceText);
+
+                panels.push({
+                    id: i + 1,
+                    text: sourceText,
+                    dialogue: dialogue,
+                    angle: angles[i % angles.length],
+                    sfx: hasAction ? actionSfxList[i % actionSfxList.length] : 'MENACING...',
+                    tone: hasAction ? 'screentone-action' : 'screentone-subtle',
+                    characterPose: getMangaFigureSVG(i, hasAction)
+                });
+            }
+
+            APP_STATE.panels = panels;
+
+            // Render Breakdown View
+            renderStoryBreakdown(panels);
+            // Render Studio Canvas
+            renderStudioPanels(panels);
+            // Render Manga Reader
+            renderReaderView(panels);
+
+            document.getElementById('panels-generated-badge').classList.remove('hidden');
+            document.getElementById('jump-to-studio-cta').classList.remove('hidden');
+
+            if (!silent) {
+                showToast(`Generated ${panels.length} manga panels successfully!`, "success");
+            }
+        }
+
+        function renderStoryBreakdown(panels) {
+            const list = document.getElementById('parsed-panels-list');
+            const analysisBox = document.getElementById('script-analysis-box');
+            
+            analysisBox.innerHTML = `
+                <div class="bg-neutral-100 p-4 rounded-xl border border-neutral-300">
+                    <div class="flex justify-between items-center text-xs font-bold text-neutral-600 mb-2">
+                        <span>STORY ENGINE BREAKDOWN</span>
+                        <span class="text-neutral-900">${panels.length} Sequential Shots</span>
+                    </div>
+                    <p class="text-sm text-neutral-800">
+                        Pacing mapped to classic right-to-left manga composition with high-energy speedline bursts, dialogue parsing, and kinetic manga vector inking.
+                    </p>
+                </div>
+            `;
+
+            list.innerHTML = '';
+            panels.forEach(p => {
+                const item = document.createElement('div');
+                item.className = "p-3 bg-white border border-neutral-200 rounded-lg flex items-center justify-between shadow-sm hover:border-black transition";
+                item.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="w-7 h-7 rounded bg-black text-white text-xs font-black flex items-center justify-center">${p.id}</span>
+                        <div>
+                            <div class="text-xs font-bold text-neutral-500 uppercase">${p.angle}</div>
+                            <div class="text-sm font-semibold text-neutral-900 truncate max-w-xs sm:max-w-md">${p.text}</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        ${p.dialogue ? `<span class="px-2 py-0.5 text-xs bg-blue-50 text-blue-800 border border-blue-200 rounded">Dialog</span>` : ''}
+                        <span class="px-2 py-0.5 text-xs bg-rose-50 text-rose-800 font-bold border border-rose-200 rounded">${p.sfx}</span>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+            list.classList.remove('hidden');
+        }
+
+        function getMangaFigureSVG(index, hasAction) {
+            // Highly stylized black & white manga line-art vector silhouettes with speedlines
+            if (index % 3 === 0) {
+                // Katana / Dual Blade Stance
+                return `
+                <svg viewBox="0 0 400 300" class="w-full h-full object-contain select-none pointer-events-none">
+                    <defs>
+                        <pattern id="pat1" width="6" height="6" patternUnits="userSpaceOnUse">
+                            <circle cx="2" cy="2" r="1" fill="#444" />
+                        </pattern>
+                    </defs>
+                    <rect width="100%" height="100%" fill="none"/>
+                    <!-- Speed lines radiating -->
+                    <line x1="0" y1="0" x2="160" y2="120" stroke="#222" stroke-width="2" stroke-dasharray="8,4"/>
+                    <line x1="400" y1="20" x2="260" y2="120" stroke="#111" stroke-width="3"/>
+                    <line x1="0" y1="300" x2="140" y2="180" stroke="#111" stroke-width="2"/>
+                    <line x1="400" y1="280" x2="270" y2="180" stroke="#333" stroke-width="2"/>
+                    
+                    <!-- Katana Blade -->
+                    <polygon points="120,40 128,30 290,210 278,220" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <line x1="126" y1="35" x2="284" y2="215" stroke="#000" stroke-width="1.5"/>
+                    <line x1="100" y1="20" x2="135" y2="55" stroke="#ff0055" stroke-width="4"/> <!-- Rainbow sheen aura -->
+
+                    <!-- Manga Silhouette Hero -->
+                    <path d="M190 90 Q 200 65, 220 70 Q 235 75, 230 95 Q 240 105, 235 125 L 210 140 L 255 180 L 245 270 L 195 270 L 190 200 L 170 270 L 135 270 L 165 170 L 160 130 Z" fill="#111111"/>
+                    <!-- Spiky Manga Hair -->
+                    <polygon points="200,65 210,40 220,62 235,45 238,68 255,58 245,82" fill="#000"/>
+                    <!-- Headband tails flying in wind -->
+                    <path d="M200 75 Q 160 70, 130 50 Q 150 75, 120 85" fill="none" stroke="#111" stroke-width="4"/>
+                </svg>`;
+            } else if (index % 3 === 1) {
+                // High Impact Kinetic Punch
+                return `
+                <svg viewBox="0 0 400 300" class="w-full h-full object-contain select-none pointer-events-none">
+                    <!-- Impact concentric starburst -->
+                    <polygon points="200,80 225,125 280,120 235,155 260,205 205,175 160,215 175,160 125,130 175,115" fill="#f8f8f8" stroke="#111" stroke-width="3"/>
+                    
+                    <!-- Lightning / Fracture Shockwaves -->
+                    <path d="M200 150 L 170 90 L 140 110 L 90 60" stroke="#000" stroke-width="3" fill="none"/>
+                    <path d="M200 150 L 240 190 L 280 180 L 330 240" stroke="#000" stroke-width="3" fill="none"/>
+                    <path d="M200 150 L 260 110 L 310 90 L 360 120" stroke="#000" stroke-width="3" fill="none"/>
+                    
+                    <!-- Massive Fist In Foreground -->
+                    <circle cx="200" cy="150" r="46" fill="#111111" stroke="#000" stroke-width="3"/>
+                    <ellipse cx="185" cy="135" rx="14" ry="11" fill="#fff" stroke="#000" stroke-width="2"/>
+                    <ellipse cx="210" cy="130" rx="13" ry="10" fill="#fff" stroke="#000" stroke-width="2"/>
+                    <ellipse cx="230" cy="145" rx="12" ry="10" fill="#fff" stroke="#000" stroke-width="2"/>
+                    <path d="M165 170 C 170 200, 230 200, 235 170" fill="none" stroke="#fff" stroke-width="3"/>
+                </svg>`;
+            } else {
+                // Face Dramatic Close-up / Glare
+                return `
+                <svg viewBox="0 0 400 300" class="w-full h-full object-contain select-none pointer-events-none">
+                    <!-- Shading tone background -->
+                    <rect width="400" height="300" fill="#f4f4f4"/>
+                    <line x1="0" y1="50" x2="400" y2="50" stroke="#ddd" stroke-width="30"/>
+                    <line x1="0" y1="250" x2="400" y2="250" stroke="#222" stroke-width="40"/>
+
+                    <!-- Intense Manga Eyes (Left & Right) -->
+                    <!-- Left Eye -->
+                    <polygon points="110,135 170,120 180,145 120,155" fill="#000"/>
+                    <circle cx="150" cy="138" r="9" fill="#fff"/>
+                    <circle cx="150" cy="138" r="4" fill="#000"/>
+                    <path d="M95 118 Q 140 100, 185 115" stroke="#111" stroke-width="6" fill="none"/> <!-- Eyebrow angled -->
+                    <line x1="110" y1="165" x2="165" y2="165" stroke="#555" stroke-width="2"/> <!-- Battle scratch -->
+
+                    <!-- Right Eye -->
+                    <polygon points="290,135 230,120 220,145 280,155" fill="#000"/>
+                    <circle cx="250" cy="138" r="9" fill="#fff"/>
+                    <circle cx="250" cy="138" r="4" fill="#000"/>
+                    <path d="M305 118 Q 260 100, 215 115" stroke="#111" stroke-width="6" fill="none"/> <!-- Eyebrow angled -->
+                    
+                    <!-- Shadow ink under brow -->
+                    <path d="M120 128 L 180 128" stroke="#111" stroke-width="2" stroke-dasharray="3,3"/>
+                    <path d="M220 128 L 280 128" stroke="#111" stroke-width="2" stroke-dasharray="3,3"/>
+                </svg>`;
+            }
+        }
+
+        function renderStudioPanels(panels) {
+            const container = document.getElementById('manga-panels-container');
+            container.innerHTML = '';
+
+            panels.forEach((p, idx) => {
+                const panelDiv = document.createElement('div');
+                panelDiv.className = `manga-panel relative border-4 border-black bg-white rounded-sm overflow-hidden flex flex-col justify-between min-h-[280px] shadow-[4px_4px_0px_#000] group transition hover:border-purple-900`;
+                panelDiv.id = `studio-panel-${p.id}`;
+
+                panelDiv.innerHTML = `
+                    <!-- Panel Top Bar info -->
+                    <div class="absolute top-2 left-2 z-20 flex items-center gap-1.5 opacity-80 group-hover:opacity-100 transition">
+                        <span class="bg-black text-white text-[11px] font-bold px-2 py-0.5 rounded">#${p.id}</span>
+                        <span class="bg-white/90 border border-black text-black text-[10px] font-bold px-1.5 py-0.5 uppercase tracking-wider">${p.angle}</span>
+                    </div>
+
+                    <!-- Delete / Action Tools for panel -->
+                    <div class="absolute top-2 right-2 z-20 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
+                        <button onclick="togglePanelSpeedlines(${p.id})" title="Toggle Speedlines" class="w-6 h-6 bg-white border border-black rounded text-[11px] hover:bg-neutral-200 flex items-center justify-center font-bold">⚡</button>
+                        <button onclick="deletePanel(${p.id})" title="Delete Panel" class="w-6 h-6 bg-rose-600 text-white border border-black rounded text-[11px] hover:bg-rose-700 flex items-center justify-center font-bold">✕</button>
+                    </div>
+
+                    <!-- Artwork & Halftone Graphic Canvas Layer -->
+                    <div class="panel-art-layer absolute inset-0 z-0 flex items-center justify-center overflow-hidden">
+                        <div class="absolute inset-0 manga-halftone pointer-events-none"></div>
+                        <div class="speed-lines-overlay absolute inset-0 speed-lines opacity-40 pointer-events-none" id="speedlines-${p.id}"></div>
+                        <div class="w-full h-full flex items-center justify-center p-2">
+                            ${p.characterPose}
+                        </div>
+                    </div>
+
+                    <!-- Sound Effect Sticker (SFX) -->
+                    <div class="absolute bottom-4 right-4 z-10 select-none cursor-pointer transform -rotate-12 hover:scale-110 transition" onclick="cycleSfx(${p.id})">
+                        <div class="sfx-text text-2xl sm:text-3xl text-yellow-300 stroke-black font-black tracking-widest drop-shadow" id="sfx-display-${p.id}">
+                            ${p.sfx}
+                        </div>
+                    </div>
+
+                    <!-- Speech Bubble Layer -->
+                    <div class="relative z-10 p-3 pt-9 flex flex-col items-start pointer-events-auto">
+                        ${p.dialogue ? `
+                            <div class="speech-bubble max-w-[85%] text-xs sm:text-sm font-bold shadow-md cursor-grab active:cursor-grabbing" contenteditable="true" title="Click to edit speech">
+                                ${p.dialogue}
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <!-- Panel Script Caption -->
+                    <div class="relative z-10 bg-black/90 text-white text-[11px] p-2 tracking-wide font-medium mt-auto border-t-2 border-black">
+                        <span class="text-neutral-400 font-bold uppercase text-[9px] mr-1">ACTION:</span>
+                        <span contenteditable="true" class="focus:outline-none focus:text-yellow-200">${p.text}</span>
+                    </div>
+                `;
+
+                container.appendChild(panelDiv);
+            });
+        }
+
+        function addSpeechBubble() {
+            if (APP_STATE.panels.length === 0) {
+                showToast("Generate or create a panel first.", "error");
+                return;
+            }
+            const firstPanel = document.querySelector('.manga-panel');
+            if (firstPanel) {
+                const bubble = document.createElement('div');
+                bubble.className = "speech-bubble max-w-[80%] text-xs sm:text-sm font-bold shadow-md mt-2 cursor-grab active:cursor-grabbing";
+                bubble.contentEditable = "true";
+                bubble.textContent = "New dialogue line!";
+                firstPanel.querySelector('.relative.z-10.p-3').appendChild(bubble);
+                showToast("Dialogue bubble added to Panel #1", "success");
+            }
+        }
+
+        function addShoutBubble() {
+            if (APP_STATE.panels.length === 0) return;
+            const sfxChoices = ["DODODO", "BAAAANG!!", "CRASHHH!", "GOGOGO", "SHIIING!"];
+            const chosen = sfxChoices[Math.floor(Math.random() * sfxChoices.length)];
+            const activeSfx = document.querySelector('.sfx-text');
+            if (activeSfx) {
+                activeSfx.textContent = chosen;
+                showToast(`Applied SFX: ${chosen}`, "success");
+            }
+        }
+
+        function togglePanelSpeedlines(panelId) {
+            const el = document.getElementById(`speedlines-${panelId}`);
+            if (el) {
+                if (el.classList.contains('hidden')) {
+                    el.classList.remove('hidden');
+                    showToast("Speedlines Enabled", "info");
+                } else {
+                    el.classList.add('hidden');
+                    showToast("Speedlines Disabled", "info");
+                }
+            }
+        }
+
+        function cycleSfx(panelId) {
+            const list = ['BAM!!', 'SLASH!!', 'DODODO', 'BOOM!', 'ZASH!'];
+            const display = document.getElementById(`sfx-display-${panelId}`);
+            if (display) {
+                const current = display.textContent.trim();
+                const nextIndex = (list.indexOf(current) + 1) % list.length;
+                display.textContent = list[nextIndex];
+            }
+        }
+
+        function addScreentoneEffect() {
+            document.querySelectorAll('.speed-lines-overlay').forEach(el => {
+                el.classList.toggle('hidden');
+            });
+            showToast("Toggled screen effect layers across all panels.", "info");
+        }
+
+        function addNewBlankPanel() {
+            const newId = APP_STATE.panels.length + 1;
+            const newPanel = {
+                id: newId,
+                text: "The hero stands firm against the darkness.",
+                dialogue: "I won't back down!",
+                angle: "DYNAMIC LOW ANGLE",
+                sfx: "FWOOSH",
+                tone: "screentone-action",
+                characterPose: getMangaFigureSVG(newId, true)
+            };
+            APP_STATE.panels.push(newPanel);
+            renderStudioPanels(APP_STATE.panels);
+            renderReaderView(APP_STATE.panels);
+            showToast(`Added Panel #${newId}`, "success");
+        }
+
+        function deletePanel(id) {
+            APP_STATE.panels = APP_STATE.panels.filter(p => p.id !== id);
+            renderStudioPanels(APP_STATE.panels);
+            renderReaderView(APP_STATE.panels);
+            showToast(`Panel #${id} removed`, "info");
+        }
+
+        function clearCurrentPage() {
+            APP_STATE.panels = [];
+            renderStudioPanels([]);
+            renderReaderView([]);
+            showToast("Canvas cleared.", "info");
+        }
+
+        function setReaderMode(mode) {
+            APP_STATE.readerMode = mode;
+            const btnWebtoon = document.getElementById('view-mode-webtoon');
+            const btnSingle = document.getElementById('view-mode-single');
+            
+            if (mode === 'webtoon') {
+                btnWebtoon.classList.add('bg-white', 'shadow-sm', 'text-neutral-900');
+                btnWebtoon.classList.remove('text-neutral-600');
+                btnSingle.classList.remove('bg-white', 'shadow-sm', 'text-neutral-900');
+                btnSingle.classList.add('text-neutral-600');
+            } else {
+                btnSingle.classList.add('bg-white', 'shadow-sm', 'text-neutral-900');
+                btnSingle.classList.remove('text-neutral-600');
+                btnWebtoon.classList.remove('bg-white', 'shadow-sm', 'text-neutral-900');
+                btnWebtoon.classList.add('text-neutral-600');
+            }
+            renderReaderView(APP_STATE.panels);
+        }
+
+        function renderReaderView(panels) {
+            const container = document.getElementById('reader-content');
+            container.innerHTML = '';
+
+            if (panels.length === 0) {
+                container.innerHTML = `
+                    <div class="text-white text-center py-16">
+                        <i class="fa-solid fa-book-skull text-5xl mb-3 text-neutral-600"></i>
+                        <h4 class="text-xl font-bold">No Manga Panels Created Yet</h4>
+                        <p class="text-neutral-400 text-sm mt-1">Visit the "Story to Manga" tab to construct pages from your story.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            panels.forEach(p => {
+                const card = document.createElement('div');
+                card.className = "bg-white border-4 border-black p-4 rounded-sm shadow-2xl relative overflow-hidden";
+                card.innerHTML = `
+                    <div class="flex justify-between items-center mb-2 pb-1 border-b border-black text-xs font-bold">
+                        <span>PANEL ${p.id}</span>
+                        <span class="text-rose-600">${p.sfx}</span>
+                    </div>
+                    <div class="h-64 sm:h-72 w-full flex items-center justify-center bg-white relative overflow-hidden border border-neutral-300">
+                        <div class="absolute inset-0 manga-halftone"></div>
+                        <div class="absolute inset-0 speed-lines opacity-30"></div>
+                        ${p.characterPose}
+                        <div class="absolute bottom-3 right-3 sfx-text text-yellow-400 text-3xl font-black">${p.sfx}</div>
+                    </div>
+                    ${p.dialogue ? `
+                        <div class="mt-3 bg-neutral-100 p-2.5 rounded border border-neutral-400 text-sm font-bold text-neutral-900 italic">
+                            "${p.dialogue}"
+                        </div>
+                    ` : ''}
+                    <div class="mt-2 text-xs text-neutral-700 font-medium">
+                        ${p.text}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function printMangaPDF() {
+            window.print();
+        }
+
+        function copyShareLink() {
+            const dummyUrl = window.location.href;
+            const tempInput = document.createElement("input");
+            tempInput.value = dummyUrl;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+            showToast("Manga Chapter Link copied to clipboard!", "success");
+        }
+
+        function switchTab(tabKey) {
+            APP_STATE.activeTab = tabKey;
+            
+            // Toggle sections
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            const targetSection = document.getElementById(`tab-${tabKey}`);
+            if (targetSection) targetSection.classList.remove('hidden');
+
+            // Header Nav styling
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('border-black', 'text-black', 'bg-neutral-100');
+                btn.classList.add('border-transparent', 'text-neutral-600');
+            });
+            const activeDesktopBtn = document.getElementById(`nav-tab-${tabKey}`) || document.getElementById(`nav-${tabKey}`);
+            if (activeDesktopBtn) {
+                activeDesktopBtn.classList.add('border-black', 'text-black', 'bg-neutral-100');
+                activeDesktopBtn.classList.remove('border-transparent', 'text-neutral-600');
+            }
+
+            // Mobile Nav styling
+            document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+                if (btn.getAttribute('data-tab') === tabKey) {
+                    btn.classList.add('bg-white', 'text-neutral-900', 'shadow-sm');
+                    btn.classList.remove('text-neutral-600');
+                } else {
+                    btn.classList.remove('bg-white', 'text-neutral-900', 'shadow-sm');
+                    btn.classList.add('text-neutral-600');
+                }
+            });
+        }
+
+        function quickGenerateDemo() {
+            switchTab('story');
+            loadTemplate('superhero');
+            generateMangaFromStory();
+            setTimeout(() => {
+                switchTab('studio');
+            }, 600);
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast-box');
+            const toastInner = document.getElementById('toast-inner');
+            const msgEl = document.getElementById('toast-message');
+            const iconEl = document.getElementById('toast-icon');
+
+            msgEl.textContent = message;
+
+            if (type === 'error') {
+                toastInner.className = "bg-rose-950 text-rose-100 border-2 border-rose-500 px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-sm font-semibold";
+                iconEl.className = "fa-solid fa-triangle-exclamation text-rose-400 text-lg";
+            } else if (type === 'success') {
+                toastInner.className = "bg-emerald-950 text-emerald-100 border-2 border-emerald-400 px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-sm font-semibold";
+                iconEl.className = "fa-solid fa-circle-check text-emerald-300 text-lg";
+            } else {
+                toastInner.className = "bg-neutral-900 text-white border-2 border-neutral-400 px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-sm font-semibold";
+                iconEl.className = "fa-solid fa-circle-info text-blue-400 text-lg";
+            }
+
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, 3200);
+        }
+    </script>
+</body>
+</html>
