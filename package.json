@@ -1,0 +1,43 @@
+{
+  "name": "task-manager",
+  "version": "1.0.0",
+  "description": "Task Manager with Node.js, Express, EJS, Tailwind CSS and File System Persistence",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "build:ui": "esbuild components/mount-share.tsx --bundle --minify --format=iife --outfile=public/js/task-share.bundle.js --define:process.env.NODE_ENV=\\\"production\\\"",
+    "build:kanban": "esbuild components/mount-kanban.tsx --bundle --minify --format=iife --outfile=public/js/kanban-board.bundle.js --define:process.env.NODE_ENV=\\\"production\\\"",
+    "build": "npm run build:ui && npm run build:kanban",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "framer-motion": "^14.0.0",
+    "lucide-react": "^1.52.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "tailwind-merge": "^3.7.0"
+  },
+  "keywords": [
+    "express",
+    "ejs",
+    "tasks",
+    "file-system",
+    "node"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "autoprefixer": "^10.6.1",
+    "esbuild": "^0.28.2",
+    "postcss": "^8.5.29",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2"
+  }
+}
