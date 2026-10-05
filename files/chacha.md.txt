@@ -1,0 +1,7 @@
+# Chacha Project Documentation & Roadmap
+
+This file serves as a documentation note for project routing and system design:
+1. Dynamic parameter routing (/file/:filename)
+2. Handling file extensions consistently
+3. Synchronizing frontend UI updates with file system state
+4. Providing real-time local hosting on port 3000/9000

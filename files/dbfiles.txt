@@ -1,0 +1,6 @@
+Database & Storage Layer Notes:
+Unlike heavy database setups (MongoDB, PostgreSQL, MySQL), this application uses file-based persistence:
+- Each task title generates a distinct .txt file in the ./files directory.
+- The task body is written as raw utf-8 text into the file.
+- Reads are instantaneous without requiring any database connections or migrations.
+- Easy to inspect, back up, and version control.

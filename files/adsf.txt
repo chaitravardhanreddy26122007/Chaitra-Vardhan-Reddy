@@ -1,0 +1,4 @@
+Quick keyboard typing test task:
+- Verify that form submission properly captures textarea content.
+- Ensure that the task persists into a .txt file upon submission.
+- Check redirect back to localhost homepage.

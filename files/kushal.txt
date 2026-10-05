@@ -1,0 +1,5 @@
+Assigned Tasks for Kushal:
+1. Verify card grid layout matches the reference screenshot (7 cards across on widescreen).
+2. Check color fidelity: #18181b background, #27272a card background, #2563eb button.
+3. Validate 'read more' navigation and ensure file contents display accurately.
+4. Verify task deletion and renaming functionality.

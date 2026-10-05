@@ -1,0 +1,12 @@
+Backend Architecture Specifications:
+- Framework: Node.js with Express.js
+- Template Engine: EJS (Embedded JavaScript)
+- Body Parsers: express.json() & express.urlencoded({ extended: true })
+- Storage: Native 'fs' module reading and writing into the ./files folder
+- Routes:
+  * GET / -> Lists all files with fs.readdir
+  * POST /create -> Writes task content with fs.writeFile
+  * GET /file/:filename -> Reads file content with fs.readFile
+  * GET /edit/:filename -> Loads filename edit form
+  * POST /edit -> Renames file with fs.rename
+  * POST /delete/:filename -> Deletes file with fs.unlink

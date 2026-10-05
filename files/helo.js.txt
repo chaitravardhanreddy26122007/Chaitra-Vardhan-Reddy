@@ -1,0 +1,5 @@
+JavaScript Backend Utilities (helo.js):
+- Sanitization helper to strip leading/trailing spaces and special characters.
+- Path normalization using path.basename to prevent directory traversal attacks.
+- Asynchronous file handling with callbacks / async-await.
+- Port listener setup supporting dual listening on port 3000 and 9000.

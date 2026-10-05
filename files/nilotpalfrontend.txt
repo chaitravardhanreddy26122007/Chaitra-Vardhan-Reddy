@@ -1,0 +1,9 @@
+Frontend Styling Specifications for Nilotpal:
+- Input 1: Title input with placeholder 'Title goes here..'
+- Input 2: Task details textarea with placeholder 'Write your task details here...'
+- Action Button: 'Create Task' with solid blue fill and smooth active state.
+- Cards Section:
+  * Minimum width per card ~210px to fit 7 columns cleanly on large screens.
+  * Bold white filename headers.
+  * Bright blue 'read more' links leading to the detail view.
+  * Clean dark mode theme without excessive borders or distractions.
