@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit <%= filename %> - Task Manager</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body {
+      background-color: #161619;
+      color: #ffffff;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-zinc-900 text-white min-h-screen">
+  <div class="main w-full min-h-screen p-10">
+    <!-- Back to Home Link -->
+    <a class="text-blue-500 inline-flex items-center gap-1 mb-8 hover:underline text-sm font-medium" href="/">
+      ← Go Back to Home
+    </a>
+
+    <div class="max-w-xl bg-zinc-800 rounded-lg p-8 border border-zinc-700/60 shadow-lg">
+      <h1 class="text-2xl font-bold tracking-tight text-white mb-6">Rename Task File</h1>
+
+      <form action="/edit" method="POST">
+        <!-- Current filename (readonly) -->
+        <div class="mb-4">
+          <label class="block text-xs uppercase tracking-wider text-zinc-400 font-semibold mb-2">Previous Name</label>
+          <input 
+            type="text" 
+            name="previous" 
+            value="<%= filename %>" 
+            readonly 
+            class="block w-full rounded-md outline-none px-5 py-3 bg-zinc-900/90 text-zinc-400 border border-zinc-700/50 cursor-not-allowed text-base font-mono"
+          >
+        </div>
+
+        <!-- New filename input -->
+        <div class="mb-6">
+          <label class="block text-xs uppercase tracking-wider text-zinc-400 font-semibold mb-2">New Name</label>
+          <input 
+            type="text" 
+            name="new" 
+            placeholder="New filename (e.g. updatedtask or updatedtask.txt)" 
+            required 
+            autofocus 
+            class="block w-full rounded-md outline-none px-5 py-3 bg-zinc-900 text-white border border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-base"
+          >
+        </div>
+
+        <!-- Action buttons -->
+        <div class="flex items-center gap-3">
+          <input 
+            type="submit" 
+            value="Update Filename" 
+            class="bg-yellow-600 hover:bg-yellow-700 px-6 py-2 rounded-md text-white font-medium cursor-pointer transition shadow-sm"
+          >
+          <a href="/" class="text-zinc-400 hover:text-white px-4 py-2 text-sm transition">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

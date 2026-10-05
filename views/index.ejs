@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Manager - Node.js + Express + fs</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #161619;
+      color: #ffffff;
+      font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .task-card {
+      background-color: #27272a;
+      transition: transform 0.15s ease, background-color 0.15s ease;
+    }
+    .task-card:hover {
+      background-color: #2e2e33;
+    }
+    .active-view-btn {
+      background-color: #2563eb;
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body class="bg-zinc-900 text-white min-h-screen">
+  <div class="main w-full min-h-screen p-6 md:p-10">
+    <!-- Header with quick links -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-6 border-b border-zinc-800 gap-4">
+      <div>
+        <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+          <span>Task Manager</span>
+          <span class="text-xs font-normal px-2 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700">Node.js + Express + fs</span>
+        </h1>
+        <p class="text-xs text-zinc-400 mt-1">Persisting tasks to disk as individual .txt files with Express routing</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <a 
+          href="/demo" 
+          class="text-xs font-medium px-3 py-1.5 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 transition flex items-center gap-1.5"
+          title="Open Trello Kanban Board and Component Demos"
+        >
+          <svg class="w-3.5 h-3.5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"></path></svg>
+          Kanban Board Demo
+        </a>
+      </div>
+    </div>
+
+    <!-- Task Creation Form -->
+    <form action="/create" method="POST" class="w-full bg-zinc-900/60 p-6 rounded-xl border border-zinc-800 mb-8">
+      <h2 class="text-sm font-semibold text-zinc-200 mb-3 uppercase tracking-wider">Create New Task File</h2>
+      <input 
+        class="block w-full rounded-md outline-none px-5 py-3 bg-zinc-800 text-white placeholder-zinc-500 text-base focus:ring-1 focus:ring-blue-500 border border-zinc-700/60" 
+        type="text" 
+        placeholder="Title goes here.." 
+        name="title" 
+        required
+        autocomplete="off"
+      >
+      <textarea 
+        class="block w-full rounded-md outline-none resize-none mt-3 px-5 py-3 bg-zinc-800 text-white placeholder-zinc-500 text-base h-28 focus:ring-1 focus:ring-blue-500 border border-zinc-700/60" 
+        placeholder="Write your task details here..." 
+        name="details"
+      ></textarea>
+      <div class="flex items-center gap-3 mt-4">
+        <input 
+          class="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-md text-white font-medium cursor-pointer transition shadow-sm text-sm" 
+          type="submit" 
+          value="Create Task"
+        >
+        <span class="text-xs text-zinc-500">Saves to <code class="text-zinc-400">./files/[title].txt</code> via fs.writeFile</span>
+      </div>
+    </form>
+
+    <!-- Dashboard View Mode Selector -->
+    <div class="flex items-center justify-between mb-6 pb-2 border-b border-zinc-800">
+      <div class="flex items-center gap-2">
+        <button 
+          id="btn-view-cards"
+          onclick="toggleDashboardView('cards')"
+          class="text-xs px-3.5 py-1.5 rounded-md font-medium transition active-view-btn"
+        >
+          Cards Grid (<%= files ? files.length : 0 %> Tasks)
+        </button>
+        <button 
+          id="btn-view-kanban"
+          onclick="toggleDashboardView('kanban')"
+          class="text-xs px-3.5 py-1.5 rounded-md font-medium text-zinc-400 hover:text-white bg-zinc-800/80 transition"
+        >
+          Interactive Kanban Board
+        </button>
+      </div>
+      <span class="text-xs text-zinc-500 hidden sm:inline">Rendered dynamically via Express.js & fs module</span>
+    </div>
+
+    <!-- VIEW 1: Task Cards Grid (Server-side rendered via fs.readdir) -->
+    <div id="view-cards-container" class="tasks flex gap-3 flex-wrap">
+      <% if (files && files.length > 0) { %>
+        <% files.forEach(function(val) { %>
+          <div class="task-card w-[220px] px-4 py-4 rounded-md bg-zinc-800 flex flex-col justify-between group relative border border-zinc-700/50 shadow-sm">
+            <div>
+              <div class="flex items-center gap-1.5 mb-1.5">
+                <span class="h-2 w-2 rounded-full bg-blue-500"></span>
+                <span class="text-[10px] text-zinc-400 uppercase tracking-wider font-semibold">.txt file</span>
+              </div>
+              <h1 class="text-white text-base font-bold tracking-tight break-all leading-snug" title="<%= val %>">
+                <%= val %>
+              </h1>
+            </div>
+            <div class="flex items-center justify-between mt-4 pt-2 border-t border-zinc-700/50">
+              <a class="text-blue-500 text-sm hover:underline font-medium inline-block" href="/file/<%= encodeURIComponent(val) %>">
+                read more
+              </a>
+              <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button 
+                  type="button" 
+                  onclick="window.openTaskShareModal && window.openTaskShareModal('<%= val %>')"
+                  class="text-xs text-blue-400 hover:text-blue-300 transition" 
+                  title="Share task file with collaborators"
+                >
+                  share
+                </button>
+                <a 
+                  href="/edit/<%= encodeURIComponent(val) %>" 
+                  class="text-xs text-zinc-400 hover:text-yellow-400 transition" 
+                  title="Rename filename"
+                >
+                  rename
+                </a>
+                <form action="/delete/<%= encodeURIComponent(val) %>" method="POST" class="inline" onsubmit="return confirm('Delete <%= val %>?');">
+                  <button 
+                    type="submit" 
+                    class="text-xs text-zinc-400 hover:text-red-400 transition" 
+                    title="Delete task"
+                  >
+                    delete
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <div class="w-full text-center py-16">
+          <p class="text-zinc-500 text-base">No tasks created yet. Type a title and details above to create your first task.</p>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- VIEW 2: Interactive Trello Kanban Board (React Mounted Component) -->
+    <div id="view-kanban-container" class="w-full hidden">
+      <div id="react-kanban-root" class="w-full"></div>
+    </div>
+  </div>
+
+  <script>
+    function toggleDashboardView(mode) {
+      const cardsView = document.getElementById('view-cards-container');
+      const kanbanView = document.getElementById('view-kanban-container');
+      const btnCards = document.getElementById('btn-view-cards');
+      const btnKanban = document.getElementById('btn-view-kanban');
+
+      if (mode === 'kanban') {
+        cardsView.classList.add('hidden');
+        kanbanView.classList.remove('hidden');
+        btnCards.classList.remove('active-view-btn');
+        btnCards.classList.add('text-zinc-400', 'bg-zinc-800/80');
+        btnKanban.classList.add('active-view-btn');
+        btnKanban.classList.remove('text-zinc-400', 'bg-zinc-800/80');
+      } else {
+        kanbanView.classList.add('hidden');
+        cardsView.classList.remove('hidden');
+        btnKanban.classList.remove('active-view-btn');
+        btnKanban.classList.add('text-zinc-400', 'bg-zinc-800/80');
+        btnCards.classList.add('active-view-btn');
+        btnCards.classList.remove('text-zinc-400', 'bg-zinc-800/80');
+      }
+    }
+  </script>
+
+  <!-- React Bundles -->
+  <script src="/js/task-share.bundle.js" defer></script>
+  <script src="/js/kanban-board.bundle.js" defer></script>
+</body>
+</html>
